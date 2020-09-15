@@ -1,0 +1,6 @@
+Python Django
+
+Recommended use is with a production handler like Apache or Nginx
+
+Link to basic Django: https://docs.djangoproject.com/en/3.1/intro/tutorial01/
+Link to pairing with Apache: https://docs.djangoproject.com/en/3.1/howto/deployment/wsgi/modwsgi/
