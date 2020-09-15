@@ -1,0 +1,32 @@
+For Python to use the MySQL plugin
+
+First download it on the server with the following command:
+  pip install mysql-connector-Python
+
+To use it in a Python script, import it as shown below:
+  import mysql.connector
+
+To connect to the database, create a new object like so:
+  mydb = mysql.connector.connect(
+    host="hostname",
+    user="username",
+    password="password"
+  )
+
+Querying:
+  myCursor = mydb.cursor()
+  queryString = "SELECT * FROM customers WHERE address = 'Park Lane 38'"
+  
+  myCursor.execute(queryString)
+  myResult = myCursor.fetchall()
+
+  for x in myResult:
+    print(x)
+
+Non-Reading Actions:
+  Instead of calling myCursor.fetchall(), simply call mydb.commit() to commit
+  changes to the database
+
+Closing Connections:
+  myCursor.close()
+  mydb.close()
