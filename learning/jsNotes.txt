@@ -1,0 +1,19 @@
+AJAX commands are important for communicating to the backend. Download
+JQuery for this:
+  1) Download JQuery to the server
+  2) Copy it to the website root directory
+  3) Include it in any html files that need to use it like so:
+    <script type="text/javascript" src="jquery.js"></script>
+
+Stack Overflow post showing how to make an AJAX call with JQuery:
+  https://stackoverflow.com/questions/8567114/how-to-make-an-ajax-call-without-jquery
+
+Basically, the AJAX calls are supposed to go to the server (i.e. Apache?)
+
+Here's another AJAX reference:
+  https://www.w3schools.com/jquery/jquery_ajax_get_post.asp
+
+For JavaScript, try to always offload the code into its own JS file. Also, try
+not to use "var" when declaring a variable because it has a weird scoping. You
+should always be able to use "let" or "const". Generally an init() function is
+required to initially load the page.
