@@ -55,10 +55,13 @@ CREATE TABLE Point_History(
   Username VARCHAR(20) NOT NULL,
   Date_ DATE NOT NULL,
   Point_Cost INT NOT NULL,
-  Type_Of_Change VARCHAR(11),     -- addition or subtraction
-  Sponsor_Admin_ID VARCHAR(25) NOT NULL,     -- Merely here for the driver's benefit, no required relationship
+  Type_Of_Change VARCHAR(11) NOT NULL,     -- addition or subtraction
+  Sponsor_ID VARCHAR(25),     -- Either Sponsor_ID or Admin_ID can be NULL, but NOT BOTH
+  Admin_Id VARCHAR(25),
   CONSTRAINT PntPK PRIMARY KEY(Username),
-  CONSTRAINT PntAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username)
+  CONSTRAINT PntAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
+  CONSTRAINT PntSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
+  CONSTRAINT PntAdmFK FOREIGN KEY(Admin_Id) REFERENCES Admins(Username)
 );
 
 CREATE TABLE Shopping_Carts(
@@ -75,7 +78,7 @@ CREATE TABLE Purchase_History(
   Date_ DATE NOT NULL,
   Point_Total INT NOT NULL,
   Product_Name VARCHAR(20),     -- TODO: Figure this out
-  Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase -- TODO: This might not be possible
+  Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase
   Sponsor_Admin_ID VARCHAR(20),     -- Merely here for the driver's benefit, no required relationship
   CONSTRAINT PchPK PRIMARY KEY(Username),
   CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username)
