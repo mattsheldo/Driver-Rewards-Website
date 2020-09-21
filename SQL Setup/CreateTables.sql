@@ -68,7 +68,8 @@ CREATE TABLE Shopping_Carts(
   Username VARCHAR(20) NOT NULL,
   Current_Total INT NOT NULL,
   Product_Name VARCHAR(20),     -- TODO: Figure this out
-  Sponsor_Admin_ID VARCHAR(20),     -- Merely here for the driver's benefit, no required relationship
+  Sponsor_ID VARCHAR(25),
+  Admin_Id VARCHAR(25),
   CONSTRAINT SCPK PRIMARY KEY(Username),
   CONSTRAINT SCAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username)
 );
@@ -79,7 +80,8 @@ CREATE TABLE Purchase_History(
   Point_Total INT NOT NULL,
   Product_Name VARCHAR(20),     -- TODO: Figure this out
   Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase
-  Sponsor_Admin_ID VARCHAR(20),     -- Merely here for the driver's benefit, no required relationship
+  Sponsor_ID VARCHAR(25),
+  Admin_Id VARCHAR(25),
   CONSTRAINT PchPK PRIMARY KEY(Username),
   CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username)
 );
