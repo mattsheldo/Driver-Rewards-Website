@@ -2,6 +2,7 @@
 CREATE TABLE Employers(
   ID INT NOT NULL,
   Name_ VARCHAR(50) NOT NULL,
+  PointsPerDollar DECIMAL(6, 2) NOT NULL,     -- 1 by default -- I don't expect more than 1,000 points/dollar
   CONSTRAINT EmpPK PRIMARY KEY(ID)
 );
 
@@ -17,7 +18,7 @@ CREATE TABLE Invoices(
 
 CREATE TABLE Accounts(
   Username VARCHAR(20) NOT NULL,
-  Encrypted_Password VARCHAR(25) NOT NULL,     -- Max password length = 20 (leave 5 characters for salting)
+  Encrypted_Password CHAR(64) NOT NULL,     -- Store the hashed password assuming SHA-256 method
   First_Name VARCHAR(20) NOT NULL,
   Last_Name VARCHAR(20) NOT NULL,
   Preferred_Name VARCHAR(20),
@@ -51,37 +52,47 @@ CREATE TABLE Admins(
   CONSTRAINT AdAccFK FOREIGN KEY(Username) REFERENCES Accounts(Username)
 );
 
+-- Create an entry for each point change
 CREATE TABLE Point_History(
+  ID INT NOT NULL,
   Username VARCHAR(20) NOT NULL,
   Date_ DATE NOT NULL,
   Point_Cost INT NOT NULL,
-  Type_Of_Change VARCHAR(11) NOT NULL,     -- addition or subtraction
+  Type_Of_Change CHAR(3) NOT NULL,     -- add or sub
   Sponsor_ID VARCHAR(25),     -- Either Sponsor_ID or Admin_ID can be NULL, but NOT BOTH
   Admin_Id VARCHAR(25),
-  CONSTRAINT PntPK PRIMARY KEY(Username),
+  CONSTRAINT PntPK PRIMARY KEY(ID),
   CONSTRAINT PntAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
   CONSTRAINT PntSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
   CONSTRAINT PntAdmFK FOREIGN KEY(Admin_Id) REFERENCES Admins(Username)
 );
 
-CREATE TABLE Shopping_Carts(
+-- Create an entry for each item in a cart
+CREATE TABLE Shopping_Cart_Items(
+  ID INT NOT NULL,
   Username VARCHAR(20) NOT NULL,
-  Current_Total INT NOT NULL,
-  Product_Name VARCHAR(20),     -- TODO: Figure this out
+  Point_Cost INT NOT NULL,
+  Product_Name VARCHAR(20) NOT NULL,
   Sponsor_ID VARCHAR(25),
   Admin_Id VARCHAR(25),
-  CONSTRAINT SCPK PRIMARY KEY(Username),
-  CONSTRAINT SCAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username)
+  CONSTRAINT CrtPK PRIMARY KEY(ID),
+  CONSTRAINT CrtAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
+  CONSTRAINT CrtSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
+  CONSTRAINT CrtAdmFK FOREIGN KEY(Admin_Id) REFERENCES Admins(Username)
 );
 
+-- Create an entry for each item purchased
 CREATE TABLE Purchase_History(
+  ID INT NOT NULL,
   Username VARCHAR(20) NOT NULL,
   Date_ DATE NOT NULL,
   Point_Total INT NOT NULL,
-  Product_Name VARCHAR(20),     -- TODO: Figure this out
+  Product_Name VARCHAR(20) NOT NULL,
   Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase
   Sponsor_ID VARCHAR(25),
   Admin_Id VARCHAR(25),
-  CONSTRAINT PchPK PRIMARY KEY(Username),
-  CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username)
+  CONSTRAINT PchPK PRIMARY KEY(ID),
+  CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
+  CONSTRAINT PchSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
+  CONSTRAINT PchAdmFK FOREIGN KEY(Admin_Id) REFERENCES Admins(Username)
 );
