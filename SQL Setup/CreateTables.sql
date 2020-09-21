@@ -75,7 +75,7 @@ CREATE TABLE Purchase_History(
   Date_ DATE NOT NULL,
   Point_Total INT NOT NULL,
   Product_Name VARCHAR(20),     -- TODO: Figure this out
-  Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase
+  Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase -- TODO: This might not be possible
   Sponsor_Admin_ID VARCHAR(20),     -- Merely here for the driver's benefit, no required relationship
   CONSTRAINT PchPK PRIMARY KEY(Username),
   CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username)
