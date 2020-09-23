@@ -35,8 +35,8 @@ const loginFun = function(){
 };
 
 const registerFun = function(){
-  // TODO: Link to registration page
-  window.location.href = "https://www.google.com/";
+  // Link to registration page
+  window.location.href = "create/";
 };
 
 const init = function(){

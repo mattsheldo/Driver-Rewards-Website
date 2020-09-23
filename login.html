@@ -3,8 +3,9 @@
   <meta charset="UTF-8">
   <title>TDR Login</title>
   <meta name="description" content="Login page for Truck Driver Rewards (TDR)">
-  <script type="text/javascript" src="login.js"></script>
-  <style src="login.css"></style>
+  {% load static %}
+  <script type="text/javascript" src="{% static "main/login.js" %}"></script>
+  <style type="text/css" src="{% static "login.css" %}"></style>
 </head>
 
 <body>
