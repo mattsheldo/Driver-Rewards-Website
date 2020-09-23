@@ -16,10 +16,10 @@ const loginFun = function(){
   let openPassword = document.querySelector("#login_page [name='password']").value;
 
   let xhr = new XMLHttpRequest();
-  let url = "backend.py";
+  let url = "connect.py";
 
   // Open connection to server
-  xhr.open("POST", url, true, username, openPassword);
+  xhr.open("POST", url, true);
   // Set header
   xhr.setRequestHeader("Content-Type", "application/json");
   // Set callback
