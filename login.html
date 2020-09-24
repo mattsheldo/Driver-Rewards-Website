@@ -1,8 +1,12 @@
 <!DOCTYPE html>
+
 <head>
   <meta charset="UTF-8">
   <title>TDR Login</title>
   <meta name="description" content="Login page for Truck Driver Rewards (TDR)">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   {% load static %}
   <script type="text/javascript" src="{% static "main/login.js" %}"></script>
   <style type="text/css" src="{% static "login.css" %}"></style>
@@ -10,15 +14,12 @@
 
 <body>
   <h1>Login</h1>
-  <form id="login_page">
-    Username&nbsp;
-    <input type="text" id="userbox" name="username" required>
-    <br>
-    Password&nbsp;
-    <input type="password" id="passbox" name="password" required>
-    <br>
-    <input type="button" id="login" value="Login">
+  <form method="POST" action"">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" name="create User">
   </form>
   <input type="button" id="register" value="Register">
 </body>
+
 </html>
