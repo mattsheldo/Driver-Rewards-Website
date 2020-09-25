@@ -27,8 +27,11 @@ def verifyAccount(userUser, userPass):
       print("verifyAccount(): Failed to query")
     finally:
       myCursor.close()
+      mydb.close()
+      return False
   except Exception:
     print("verifyAccount(): Failed to connect")
   finally:
     mydb.close()
+    return False
   
