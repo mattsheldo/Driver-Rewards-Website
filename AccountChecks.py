@@ -9,10 +9,9 @@ def verifyAccount(userUser, userPass):
       password="adminpass"
     )
 
-    # Look for a username and password match
+    # Look for a username and password match in Drivers
     myCursor = mydb.cursor()
-    query = "SELECT * FROM Accounts WHERE Username = '" + userUser + "' AND Encrypted_Password = '" + userPass + "' AND Approved = True;"
-
+    query = "SELECT * FROM Drivers WHERE Username = '" + userUser + "';"
     try:
       # Execute query and get results
       myCursor.execute(query)
@@ -20,18 +19,48 @@ def verifyAccount(userUser, userPass):
 
       # If a result is found, then there's a match and the account is verified
       if len(myResults) > 0:
-        return True
-      else:
-        return False
+        # Driver found
+        five = 5
     except Exception:
-      print("verifyAccount(): Failed to query")
+      print("verifyAccount(): Failed to query Drivers")
     finally:
       myCursor.close()
-      mydb.close()
-      return False
+
+    # Look for a username and password match in Sponsors
+    myCursor = mydb.cursor()
+    query = "SELECT * FROM Sponsors WHERE Username = '" + userUser + "';"
+    try:
+      # Execute query and get results
+      myCursor.execute(query)
+      myResults = myCursor.fetchall()
+
+      # If a result is found, then there's a match and the account is verified
+      if len(myResults) > 0:
+        # Sponsor found
+        five = 5
+    except Exception:
+      print("verifyAccount(): Failed to query Sponsors")
+    finally:
+      myCursor.close()
+
+    # Look for a username and password match in Admins
+    myCursor = mydb.cursor()
+    query = "SELECT * FROM Admins WHERE Username = '" + userUser + "';"
+    try:
+      # Execute query and get results
+      myCursor.execute(query)
+      myResults = myCursor.fetchall()
+
+      # If a result is found, then there's a match and the account is verified
+      if len(myResults) > 0:
+        # Admin found
+        five = 5
+    except Exception:
+      print("verifyAccount(): Failed to query Admins")
+    finally:
+      myCursor.close()
   except Exception:
     print("verifyAccount(): Failed to connect")
   finally:
     mydb.close()
-    return False
   
