@@ -18,7 +18,7 @@ CREATE TABLE Invoices(
 
 CREATE TABLE Accounts(
   Username VARCHAR(20) NOT NULL,
-  Encrypted_Password VARCHAR(64) NOT NULL,     -- Store the hashed password assuming SHA-256 method
+  Encrypted_Password VARCHAR(80) NOT NULL,     -- Store the hashed password assuming SHA-256 method
   First_Name VARCHAR(20) NOT NULL,
   Last_Name VARCHAR(20) NOT NULL,
   Preferred_Name VARCHAR(20),
