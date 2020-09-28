@@ -25,7 +25,6 @@ CREATE TABLE Accounts(
   Phone_Number CHAR(10) NOT NULL,
   Email VARCHAR(50) NOT NULL,
   Address_ VARCHAR(100) NOT NULL,
-  Approved BOOLEAN NOT NULL,     -- False upon account creation until approved
   CONSTRAINT AccPK PRIMARY KEY(Username)
 );
 
