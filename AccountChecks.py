@@ -9,7 +9,7 @@ def verifyAccount(userUser, userPass):
       password="adminpass"
     )
 
-    # Look for a username and password match in Drivers
+    # Look for a match in Drivers
     myCursor = mydb.cursor()
     query = "SELECT * FROM Drivers WHERE Username = '" + userUser + "';"
     try:
@@ -17,7 +17,7 @@ def verifyAccount(userUser, userPass):
       myCursor.execute(query)
       myResults = myCursor.fetchall()
 
-      # If a result is found, then there's a match and the account is verified
+      # If a result is found, then there's a match
       if len(myResults) > 0:
         # Driver found
         five = 5
@@ -26,7 +26,7 @@ def verifyAccount(userUser, userPass):
     finally:
       myCursor.close()
 
-    # Look for a username and password match in Sponsors
+    # Look for a match in Sponsors
     myCursor = mydb.cursor()
     query = "SELECT * FROM Sponsors WHERE Username = '" + userUser + "';"
     try:
@@ -34,7 +34,7 @@ def verifyAccount(userUser, userPass):
       myCursor.execute(query)
       myResults = myCursor.fetchall()
 
-      # If a result is found, then there's a match and the account is verified
+      # If a result is found, then there's a match
       if len(myResults) > 0:
         # Sponsor found
         five = 5
@@ -43,7 +43,7 @@ def verifyAccount(userUser, userPass):
     finally:
       myCursor.close()
 
-    # Look for a username and password match in Admins
+    # Look for a match in Admins
     myCursor = mydb.cursor()
     query = "SELECT * FROM Admins WHERE Username = '" + userUser + "';"
     try:
@@ -51,7 +51,7 @@ def verifyAccount(userUser, userPass):
       myCursor.execute(query)
       myResults = myCursor.fetchall()
 
-      # If a result is found, then there's a match and the account is verified
+      # If a result is found, then there's a match
       if len(myResults) > 0:
         # Admin found
         five = 5
