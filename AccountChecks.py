@@ -20,7 +20,7 @@ def verifyAccount(userUser):
             # If a result is found, then there's a match
             if len(myResults) > 0:
                 # Driver found
-                five = 5
+                return "d"
         except Exception:
             print("verifyAccount(): Failed to query Drivers")
         finally:
@@ -37,7 +37,7 @@ def verifyAccount(userUser):
             # If a result is found, then there's a match
             if len(myResults) > 0:
                 # Sponsor found
-                five = 5
+                return "s"
         except Exception:
             print("verifyAccount(): Failed to query Sponsors")
         finally:
@@ -54,7 +54,7 @@ def verifyAccount(userUser):
             # If a result is found, then there's a match
             if len(myResults) > 0:
                 # Admin found
-                five = 5
+                return "a"
         except Exception:
             print("verifyAccount(): Failed to query Admins")
         finally:
@@ -63,4 +63,5 @@ def verifyAccount(userUser):
         print("verifyAccount(): Failed to connect")
     finally:
         mydb.close()
+        return ""
   
