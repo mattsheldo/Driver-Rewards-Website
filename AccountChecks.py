@@ -4,9 +4,9 @@ def verifyAccount(userUser):
     # Open connection
     try:
         mydb = mysql.connector.connect(
-        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
-        user="admin",
-        password="adminpass"
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass"
         )
 
         # Look for a match in Drivers
