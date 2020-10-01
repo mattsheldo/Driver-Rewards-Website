@@ -13,7 +13,7 @@ def verifyAccount(userUser):
 
         # Look for a match in Drivers
         myCursor = mydb.cursor()
-        query = "SELECT * FROM Drivers WHERE Username = '" + userUser + "';"
+        query = "SELECT * FROM DriverRewards.Drivers WHERE Username = '" + userUser + "';"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -33,7 +33,7 @@ def verifyAccount(userUser):
 
         # Look for a match in Sponsors
         myCursor = mydb.cursor()
-        query = "SELECT * FROM Sponsors WHERE Username = '" + userUser + "';"
+        query = "SELECT * FROM DriverRewards.Sponsors WHERE Username = '" + userUser + "';"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -53,7 +53,7 @@ def verifyAccount(userUser):
 
         # Look for a match in Admins
         myCursor = mydb.cursor()
-        query = "SELECT * FROM Admins WHERE Username = '" + userUser + "';"
+        query = "SELECT * FROM DriverRewards.Admins WHERE Username = '" + userUser + "';"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -89,7 +89,7 @@ def findUsername():
 
         # Look for the most recent login
         myCursor = mydb.cursor()
-        query = "SELECT username FROM auth_user ORDER BY last_login DESC;"
+        query = "SELECT username FROM DriverRewards.auth_user ORDER BY last_login DESC;"
         try:
             # Execute query and get results
             myCursor.execute(query)
