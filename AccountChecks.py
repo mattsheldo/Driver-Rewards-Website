@@ -85,7 +85,8 @@ def findUsername():
         mydb = mysql.connector.connect(
             host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
             user="admin",
-            password="adminpass"
+            password="adminpass",
+            database="DriverRewards"
         )
 
         # Look for the most recent login
@@ -98,7 +99,7 @@ def findUsername():
 
             # Get first result
             for x in myResults:
-                returnVal = x
+                returnVal = x[0]
                 myCursor.close()
                 mydb.close()
                 return returnVal
