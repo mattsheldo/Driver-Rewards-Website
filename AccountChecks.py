@@ -27,8 +27,8 @@ def verifyAccount(userUser):
                 myCursor.close()
                 mydb.close()
                 return returnType
-        except Exception:
-            print("verifyAccount(): Failed to query Drivers")
+        except Exception as e:
+            print("verifyAccount(): Failed to query Drivers: " + str(e))
         finally:
             myCursor.close()
 
@@ -47,8 +47,8 @@ def verifyAccount(userUser):
                 myCursor.close()
                 mydb.close()
                 return returnType
-        except Exception:
-            print("verifyAccount(): Failed to query Sponsors")
+        except Exception as e:
+            print("verifyAccount(): Failed to query Sponsors: " + str(e))
         finally:
             myCursor.close()
 
@@ -67,12 +67,12 @@ def verifyAccount(userUser):
                 myCursor.close()
                 mydb.close()
                 return returnType
-        except Exception:
-            print("verifyAccount(): Failed to query Admins")
+        except Exception as e:
+            print("verifyAccount(): Failed to query Admins: " + str(e))
         finally:
             myCursor.close()
-    except Exception:
-        print("verifyAccount(): Failed to connect")
+    except Exception as e:
+        print("verifyAccount(): Failed to connect: " + str(e))
     finally:
         mydb.close()
         return returnType
@@ -102,12 +102,12 @@ def findUsername():
                 myCursor.close()
                 mydb.close()
                 return returnVal
-        except Exception:
-            print("verifyAccount(): Failed to query auth_user")
+        except Exception as e:
+            print("verifyAccount(): Failed to query auth_user: " + str(e))
         finally:
             myCursor.close()
-    except Exception:
-        print("verifyAccount(): Failed to connect")
+    except Exception as e:
+        print("verifyAccount(): Failed to connect: " + str(e))
     finally:
         mydb.close()
         return returnVal
