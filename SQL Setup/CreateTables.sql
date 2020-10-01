@@ -29,26 +29,26 @@ CREATE TABLE Accounts(
 );
 
 CREATE TABLE Drivers(
-  Username VARCHAR(20) NOT NULL,
+  Username VARCHAR(150) NOT NULL,
   Employer_ID INT NOT NULL,
   Point_Total INT NOT NULL,
   CONSTRAINT DrPK PRIMARY KEY(Username),
-  CONSTRAINT DrAccFK FOREIGN KEY(Username) REFERENCES Accounts(Username),
+  CONSTRAINT DrAccFK FOREIGN KEY(Username) REFERENCES auth_user(username),
   CONSTRAINT DrEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
 );
 
 CREATE TABLE Sponsors(
-  Username VARCHAR(20) NOT NULL,
+  Username VARCHAR(150) NOT NULL,
   Employer_ID INT NOT NULL,
   CONSTRAINT SpPK PRIMARY KEY(Username),
-  CONSTRAINT SpAccFK FOREIGN KEY(Username) REFERENCES Accounts(Username),
+  CONSTRAINT SpAccFK FOREIGN KEY(Username) REFERENCES auth_user(username),
   CONSTRAINT SpEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
 );
 
 CREATE TABLE Admins(
-  Username VARCHAR(20) NOT NULL,
+  Username VARCHAR(150) NOT NULL,
   CONSTRAINT AdPK PRIMARY KEY(Username),
-  CONSTRAINT AdAccFK FOREIGN KEY(Username) REFERENCES Accounts(Username)
+  CONSTRAINT AdAccFK FOREIGN KEY(Username) REFERENCES auth_user(username)
 );
 
 -- Create an entry for each point change
