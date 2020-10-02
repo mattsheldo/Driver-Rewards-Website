@@ -1,6 +1,6 @@
-<form method="POST" action"">
+<form method="POST">
 	{% csrf_token %}
-	{{form.as_p}}
+	{{user_form.as_p}}
 	<div>
 		<button type="submit" >Sign Up</button>
 	</div>

@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['ec2-54-88-218-67.compute-1.amazonaws.com','54.88.218.67']
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [    
     'main.apps.MainConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -76,12 +76,12 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'DriverRewards',
-        #'HOST': 'cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com',
-        #'PORT': '3306',
-        #'USER': 'admin',
-        #'PASSWORD': 'adminpass',
+        'HOST': 'cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com',
+        'PORT': '3306',
+        'USER': 'admin',
+        'PASSWORD': 'adminpass',
     }
 }
 
@@ -127,3 +127,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')        
 ]
+LOGIN_REDIRECT_URL = 'home-home'
+
+
