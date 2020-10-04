@@ -5,35 +5,30 @@ try:
   mydb = mysql.connector.connect(
     host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
     user="admin",
-    password="adminpass"
+    password="adminpass",
+    database="DriverRewards"
   )
-
-  username = getstuff()
-  acctype = getstuff()
-
-  # Look for a username and password match
+  
   myCursor = mydb.cursor()
-  query = ""
-  if acctype=='Driver':
-    query = "INSERT INTO Drivers VALUES ('" + username + "', -1, 0)"
-  elif acctype=='Sponsor':
-    query = "INSERT INTO Sponsors VALUES ('" + username + "', -1)"
-  elif acctype=='Admin':
-    query = "INSERT INTO Admins VALUES ('" + username + "')"
-
+  query = "INSERT INTO Drivers (Username, Employer_ID, Point_Total) VALUES ('admin', -1, 0);"
+  # query = 'SELECT * FROM Employers;'
+  # val = ('zachtest', -1, 0)
+  
   try:
     # Execute query and get results
     myCursor.execute(query)
+    # results = myCursor.fetchall()
     mydb.commit()
 
-  except Exception:
-    print("verifyAccount(): Failed to query")
+    # for i in results:
+    #   print(i)
+
+  except Exception as e:
+    print("verifyAccount(): Failed to query: " + str(e))
   finally:
     myCursor.close()
     mydb.close()
-    return
-except Exception:
-  print("verifyAccount(): Failed to connect")
+except Exception as e:
+  print("verifyAccount(): Failed to connect: " + str(e))
 finally:
   mydb.close()
-  return
