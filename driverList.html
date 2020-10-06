@@ -1,14 +1,21 @@
 {% extends "driverRewards/basic.html" %}
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
 <h1>Driver List</h1>
-<p>Lists each driver in the company with their current point total</p>
-<ul>
+<p>List of each driver in the company with their current point total</p>
+<div id="dList">
   {% for driver in driverList %}
-  <li>{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }}</li>
+  <div class="dItem">{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }} points</div>
+  <form method="POST" , action="/home/drivers/">
+    {% csrf_token %}
+    <input type="number" name="pointInput" id="pointInputID">
+    <input type="submit" value="Add" id="addButID" name="addBut">
+    <input type="submit" value="Remove" id="removeButID" name="removeBut">
+  </form>
   {% endfor %}
-</ul>
+</div>
+
+<script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
 {% endblock content %}
 
 {% block extraButtons %}
