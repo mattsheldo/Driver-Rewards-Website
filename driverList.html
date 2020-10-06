@@ -1,6 +1,15 @@
 {% extends "driverRewards/basic.html" %}
 {% block content %}
-  {% load static %}
-  <script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
-  <h1>Driver List</h1>
+{% load static %}
+<script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
+<h1>Driver List</h1>
+<ul>
+  {% for driver in driverList %}
+  <li>{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }}</li>
+  {% endfor %}
+</ul>
 {% endblock content %}
+
+{% block extraButtons %}
+<a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+{% endblock extraButtons %}
