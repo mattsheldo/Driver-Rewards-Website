@@ -1,4 +1,4 @@
-const init = function () {
+const init = function(){
   console.log("init");
 };
 
