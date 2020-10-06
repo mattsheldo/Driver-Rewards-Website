@@ -1,5 +1,10 @@
 import mysql.connector
 
+class DriverListItem:
+    def __init__(self, user, pointTotal):
+        self.user = user
+        self.pointTotal = pointTotal
+
 def pulldownDrivers(sponsor):
     driverNames = []
 
@@ -14,7 +19,7 @@ def pulldownDrivers(sponsor):
 
         # Look for all driver under the current sponsor
         myCursor = mydb.cursor()
-        query = "SELECT Drivers.Username FROM Drivers JOIN Sponsors ON Drivers.Employer_ID = Sponsors.Employer_ID WHERE Sponsors.Username = '" + sponsor + "';"
+        query = "SELECT Drivers.Username, Drivers.Point_Total FROM Drivers JOIN Sponsors ON Drivers.Employer_ID = Sponsors.Employer_ID WHERE Sponsors.Username = '" + sponsor + "';"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -22,7 +27,7 @@ def pulldownDrivers(sponsor):
 
             # Put query results into a list
             for d in myResults:
-                driverNames.append(d[0])
+                driverNames.append(DriverListItem(d[0], d[1]))
         except Exception as e:
             print("pulldownDrivers(): Failed to query database: " + str(e))
         finally:
