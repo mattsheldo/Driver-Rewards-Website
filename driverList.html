@@ -3,6 +3,7 @@
 {% load static %}
 <script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
 <h1>Driver List</h1>
+<p>Lists each driver in the company with their point total</p>
 <ul>
   {% for driver in driverList %}
   <li>{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }}</li>
