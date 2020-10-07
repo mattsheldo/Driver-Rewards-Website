@@ -1,8 +1,15 @@
 import mysql.connector
 from datetime import datetime
 
-def addPoints(sponsor, driver, currentPoints, newPoints):
-    newTotal = currentPoints + newPoints
+def addPoints(sponsor, driver, currentPoints, newPoints, addB):
+    newTotal = 0
+    changeType = ""
+    if addB:
+        newTotal = currentPoints + newPoints
+        changeType = "add"
+    else:
+        newTotal = currentPoints - newPoints
+        changeType = "sub"
 
     # Open connection
     try:
@@ -45,7 +52,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints):
         today = datetime.today().strftime("%Y-%m-%d")
         # Update Point_History
         myCursor = mydb.cursor()
-        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", 'add', '" + sponsor + "');"
+        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
         try:
             # Execute query and commit
             myCursor.execute(query)
