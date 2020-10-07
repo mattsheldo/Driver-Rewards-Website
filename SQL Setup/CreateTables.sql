@@ -54,7 +54,7 @@ CREATE TABLE Admins(
 -- Create an entry for each point change
 CREATE TABLE Point_History(
   ID INT NOT NULL,
-  Username VARCHAR(20) NOT NULL,
+  Username VARCHAR(100) NOT NULL,
   Date_ DATE NOT NULL,
   Point_Cost INT NOT NULL,
   Type_Of_Change CHAR(3) NOT NULL,     -- add or sub
