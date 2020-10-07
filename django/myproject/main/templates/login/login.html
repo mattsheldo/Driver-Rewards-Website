@@ -1,4 +1,17 @@
-<!DOCTYPE html>
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  {% load static %}
+  <script type="text/javascript" src="{% static "main/login.js" %}"></script>
+  <h1>Login</h1>
+  <form method="POST" action"">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" name="create User" value="Login">
+  </form>
+  <input type="button" id="register" value="Register">
+{% endblock content %}
+
+<!--<!DOCTYPE html>
 
 <head>
   <meta charset="UTF-8">

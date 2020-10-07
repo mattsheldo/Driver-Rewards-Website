@@ -1,9 +1,19 @@
-<!DOCTYPE html>
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	{% load static %}
+	<script type="text/javascript" src="{% static "main/home.js" %}"></script>
+        <h1>Driver Home</h1>
+        <input type="button" id="logout" value="logout">
+{% endblock content %}
+
+
+<!--<!DOCTYPE html>
     <head>   
 	{% load static %}
     	<script type="text/javascript" src="{% static "main/home.js" %}"></script>
     </head>
     <body>
+	<h1>Driver Home</h1>
 	<input type="button" id="logout" value="logout">
     </body>
  </html>

@@ -1,0 +1,12 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+        {% load static %}
+	        <script type="text/javascript" src="{% static "main/home.js" %}"></script>
+		        <h1>Point Value</h1>
+			        <input type="button" id="logout" value="logout">
+				{% endblock content %}
+
+				{% block extraButtons %}
+				        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+					{% endblock extraButtons %}
+
