@@ -15,7 +15,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints):
 
         # Update driver's points
         myCursor = mydb.cursor()
-        query = "UPDATE Drivers SET Point_Total = " + newTotal + " WHERE Username = '" + driver + "';"
+        query = "UPDATE Drivers SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "';"
         try:
             # Execute query and commit
             myCursor.execute(query)
@@ -26,9 +26,9 @@ def addPoints(sponsor, driver, currentPoints, newPoints):
             myCursor.close()
 
         # Get the last used ID from Point_History
-        myid = -1
+        myid = 0
         myCursor = mydb.cursor()
-        query = "SELECT ID FROM Point_History WHERE Username = '" + driver + "';"
+        query = "SELECT ID FROM Point_History ORDER BY ID DESC LIMIT 1;"
         try:
             # Execute query
             myCursor.execute(query)
@@ -45,7 +45,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints):
         today = datetime.today().strftime("%Y-%m-%d")
         # Update Point_History
         myCursor = mydb.cursor()
-        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + myid + ", '" + driver + "', '" + today + "', " + newPoints + ", 'add', '" + sponsor + "');"
+        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", 'add', '" + sponsor + "');"
         try:
             # Execute query and commit
             myCursor.execute(query)
