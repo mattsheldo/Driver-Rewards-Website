@@ -35,7 +35,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints):
             myResults = myCursor.fetchall()
 
             for i in myResults:
-              myid = i[0] + 1
+              myid = int(i[0]) + 1
         except Exception as e:
             print("addPoints(): Failed to query database: " + str(e))
         finally:
