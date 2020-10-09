@@ -1,23 +1,11 @@
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
-#from django.http import HttpResponse
-from django.contrib.auth.forms import AuthenticationForm
-#from UserCreation import addUserInfo
-#from AddToTypeTable import addUserTypeInfo
-=======
 from django.contrib.auth.forms import AuthenticationForm
 #from UserCreation import addUserInfo
 from ProfilePage import getUserInfo 
->>>>>>> Sprint4
 from .forms import UserForm
 
 import mysql.connector
 
-<<<<<<< HEAD
-def addUserInfo(userUser,prefName,phoneNum,address):
-    # Open connection
-    #try:
-=======
 from datetime import datetime
 
 def addPoints(sponsor, driver, currentPoints, newPoints, addB):
@@ -126,7 +114,7 @@ def pulldownDrivers(sponsor):
         mydb.close()
         return driverNames
 
-def UpdatePointValue(sponsorID, DollarValue):
+def UpdatePVal(sponsorID, DollarValue):
     mydb = mysql.connector.connect(
         host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
         user="admin",
@@ -162,7 +150,6 @@ def getID(userName):
     return myResults
 
 def addUserInfo(userUser,prefName,phoneNum,address):
->>>>>>> Sprint4
     mydb = mysql.connector.connect(
         host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
         user="admin",
@@ -172,35 +159,15 @@ def addUserInfo(userUser,prefName,phoneNum,address):
 
     myCursor = mydb.cursor()
     query = "UPDATE auth_user SET phone = '"+phoneNum+"', address_ = '"+address+"', preferred_name = '"+prefName+"' WHERE username = '"+userUser+"';"
-<<<<<<< HEAD
-        #val = (phoneNum,address,prefName,username)
-
-        #try:
-    myCursor.execute(query)
-    mydb.commit()
-        #except Exception:
-        #    print("verifyAccount(): Failed to query")
-        #finally:
-    myCursor.close()
-    #except Exception:
-    #    print("verifyAccount(): Failed to connect")
-    #finally:
-=======
 
     myCursor.execute(query)
     mydb.commit()
         
     myCursor.close()
->>>>>>> Sprint4
     mydb.close()
 
 
 def addUserTypeInfo(userUser,userType):
-<<<<<<< HEAD
-    # Open connection
-    #try:
-=======
->>>>>>> Sprint4
     mydb = mysql.connector.connect(
         host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
         user="admin",
@@ -212,26 +179,6 @@ def addUserTypeInfo(userUser,userType):
 
     if userType is 'Driver':
         query = "INSERT INTO Drivers (Username, Employer_ID, Point_Total) VALUES ('"+userUser+"', -1, 0);"
-<<<<<<< HEAD
-        #val = (userUser,-1,0)
-    elif userType is 'Sponsor':
-        query = "INSERT INTO Sponsors (Username, Employer_ID) VALUES ('"+userUser+"',-1);"
-        #val = (userUser,-1)
-    else:
-        query = "INSERT INTO Admins (Username) VALUES ('"+userUser+"');"
-        #val = (userUser)
-        #try:
-    myCursor.execute(query)
-    mydb.commit()
-        #except Exception:
-        #    print("verifyAccount(): Failed to query")
-        #finally:
-    myCursor.close()
-     
-     #except Exception:
-       # print("verifyAccount(): Failed to connect")
-    #finally:
-=======
 
     elif userType is 'Sponsor':
         query = "INSERT INTO Sponsors (Username, Employer_ID) VALUES ('"+userUser+"',-1);"
@@ -242,7 +189,6 @@ def addUserTypeInfo(userUser,userType):
     myCursor.execute(query)
     mydb.commit()
     myCursor.close()
->>>>>>> Sprint4
     mydb.close()
 
 def verifyAccount(userUser):
@@ -322,45 +268,6 @@ def verifyAccount(userUser):
         mydb.close()
         return returnType
 
-<<<<<<< HEAD
-def findUsername():
-    # Goal: find username of the most recent login to pass to verifyAccount()
-    returnVal = ""
-    # Open connection
-    try:
-        mydb = mysql.connector.connect(
-            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
-            user="admin",
-            password="adminpass",
-            database="DriverRewards"
-        )
-
-        # Look for the most recent login
-        myCursor = mydb.cursor()
-        query = "SELECT username FROM auth_user ORDER BY last_login DESC;"
-        try:
-            # Execute query and get results
-            myCursor.execute(query)
-            myResults = myCursor.fetchall()
-
-            # Get first result
-            for x in myResults:
-                returnVal = x[0]
-                myCursor.close()
-                mydb.close()
-                return returnVal
-        except Exception as e:
-            print("verifyAccount(): Failed to query auth_user: " + str(e))
-        finally:
-            myCursor.close()
-    except Exception as e:
-        print("verifyAccount(): Failed to connect: " + str(e))
-    finally:
-        mydb.close()
-        return returnVal
- 
-=======
->>>>>>> Sprint4
 
 def createAcc(request):
     if request.method == 'POST':
@@ -389,11 +296,7 @@ def createAcc(request):
 
 
 def home(request):
-<<<<<<< HEAD
-    loginUsername = findUsername()
-=======
     loginUsername = request.user.username
->>>>>>> Sprint4
     accType = verifyAccount(loginUsername)
     if accType == "d":
         return render(request, 'homepage/homepage.html')
@@ -403,8 +306,6 @@ def home(request):
         return render(request, 'homepage/admin_homepage.html')
     else:
         return redirect('//54.88.218.67')
-<<<<<<< HEAD
-=======
 
 def viewMyDrivers(request):
     if request.method == 'POST':
@@ -445,7 +346,7 @@ def UpdatePointVal(request):
         dollarValue = request.POST.get("pointVal")
         # Call this if it's an ad
         if dollarValue == "10":
-            UpdatePointValue(sponsorUser, dollarValue)
+            UpdatePVal(sponsorUser, dollarValue)
             return redirect('//54.88.218.67/home/point_value/')
         else:
             return redirect('//54.88.218.67/logout/')
@@ -454,4 +355,3 @@ def UpdatePointVal(request):
 
 
 
->>>>>>> Sprint4
