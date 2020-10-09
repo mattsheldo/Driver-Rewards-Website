@@ -1,15 +1,168 @@
 from django.shortcuts import render, redirect
+<<<<<<< HEAD
 #from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
 #from UserCreation import addUserInfo
 #from AddToTypeTable import addUserTypeInfo
+=======
+from django.contrib.auth.forms import AuthenticationForm
+#from UserCreation import addUserInfo
+from ProfilePage import getUserInfo 
+>>>>>>> Sprint4
 from .forms import UserForm
 
 import mysql.connector
 
+<<<<<<< HEAD
 def addUserInfo(userUser,prefName,phoneNum,address):
     # Open connection
     #try:
+=======
+from datetime import datetime
+
+def addPoints(sponsor, driver, currentPoints, newPoints, addB):
+    newTotal = 0
+    changeType = ""
+    if addB:
+        newTotal = currentPoints + newPoints
+        changeType = "add"
+    else:
+        newTotal = currentPoints - newPoints
+        changeType = "sub"
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Update driver's points
+        myCursor = mydb.cursor()
+        query = "UPDATE Drivers SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "';"
+        try:
+            # Execute query and commit
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("addPoints(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Get the last used ID from Point_History
+        myid = 0
+        myCursor = mydb.cursor()
+        query = "SELECT ID FROM Point_History ORDER BY ID DESC LIMIT 1;"
+        try:
+            # Execute query
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for i in myResults:
+              myid = int(i[0]) + 1
+              break
+        except Exception as e:
+            print("addPoints(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Get current date
+        today = datetime.today().strftime("%Y-%m-%d")
+        # Update Point_History
+        myCursor = mydb.cursor()
+        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
+        try:
+            # Execute query and commit
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("addPoints(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("addPoints(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+
+class DriverListItem:
+    def __init__(self, first, last, pointTotal, user):
+        self.first = first
+        self.last = last
+        self.pointTotal = pointTotal
+        self.user = user
+
+def pulldownDrivers(sponsor):
+    driverNames = []
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for all driver under the current sponsor
+        myCursor = mydb.cursor()
+        query = "SELECT auth_user.first_name, auth_user.last_name, Drivers.Point_Total, auth_user.username FROM (Drivers JOIN Sponsors ON Drivers.Employer_ID = Sponsors.Employer_ID) JOIN auth_user ON Drivers.Username = auth_user.username WHERE Sponsors.Username = '" + sponsor + "' ORDER BY auth_user.last_name, auth_user.first_name;"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Put query results into a list
+            for d in myResults:
+                driverNames.append(DriverListItem(d[0], d[1], d[2], d[3]))
+        except Exception as e:
+            print("pulldownDrivers(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pulldownDrivers(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return driverNames
+
+def UpdatePointValue(sponsorID, DollarValue):
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+    query = "UPDATE Employers SET PointsPerDollar = '"+str(DollarValue)+"' WHERE ID = '"+str(sponsorID)+"';"
+
+    myCursor.execute(query)
+    mydb.commit()
+
+    myCursor.close()
+    mydb.close()
+
+def getID(userName):
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+
+    myCursor = mydb.cursor()
+    query = "SELECT Employer_ID FROM Sponsors WHERE Username = '"+userName+"';"
+
+    myCursor.execute(query)
+    myResults = myCursor.fetchall()
+    mydb.commit()
+
+    myCursor.close()
+    mydb.close()
+    return myResults
+
+def addUserInfo(userUser,prefName,phoneNum,address):
+>>>>>>> Sprint4
     mydb = mysql.connector.connect(
         host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
         user="admin",
@@ -19,6 +172,7 @@ def addUserInfo(userUser,prefName,phoneNum,address):
 
     myCursor = mydb.cursor()
     query = "UPDATE auth_user SET phone = '"+phoneNum+"', address_ = '"+address+"', preferred_name = '"+prefName+"' WHERE username = '"+userUser+"';"
+<<<<<<< HEAD
         #val = (phoneNum,address,prefName,username)
 
         #try:
@@ -31,12 +185,22 @@ def addUserInfo(userUser,prefName,phoneNum,address):
     #except Exception:
     #    print("verifyAccount(): Failed to connect")
     #finally:
+=======
+
+    myCursor.execute(query)
+    mydb.commit()
+        
+    myCursor.close()
+>>>>>>> Sprint4
     mydb.close()
 
 
 def addUserTypeInfo(userUser,userType):
+<<<<<<< HEAD
     # Open connection
     #try:
+=======
+>>>>>>> Sprint4
     mydb = mysql.connector.connect(
         host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
         user="admin",
@@ -48,6 +212,7 @@ def addUserTypeInfo(userUser,userType):
 
     if userType is 'Driver':
         query = "INSERT INTO Drivers (Username, Employer_ID, Point_Total) VALUES ('"+userUser+"', -1, 0);"
+<<<<<<< HEAD
         #val = (userUser,-1,0)
     elif userType is 'Sponsor':
         query = "INSERT INTO Sponsors (Username, Employer_ID) VALUES ('"+userUser+"',-1);"
@@ -66,6 +231,18 @@ def addUserTypeInfo(userUser,userType):
      #except Exception:
        # print("verifyAccount(): Failed to connect")
     #finally:
+=======
+
+    elif userType is 'Sponsor':
+        query = "INSERT INTO Sponsors (Username, Employer_ID) VALUES ('"+userUser+"',-1);"
+        
+    else:
+        query = "INSERT INTO Admins (Username) VALUES ('"+userUser+"');"
+        
+    myCursor.execute(query)
+    mydb.commit()
+    myCursor.close()
+>>>>>>> Sprint4
     mydb.close()
 
 def verifyAccount(userUser):
@@ -145,6 +322,7 @@ def verifyAccount(userUser):
         mydb.close()
         return returnType
 
+<<<<<<< HEAD
 def findUsername():
     # Goal: find username of the most recent login to pass to verifyAccount()
     returnVal = ""
@@ -181,6 +359,8 @@ def findUsername():
         mydb.close()
         return returnVal
  
+=======
+>>>>>>> Sprint4
 
 def createAcc(request):
     if request.method == 'POST':
@@ -209,7 +389,11 @@ def createAcc(request):
 
 
 def home(request):
+<<<<<<< HEAD
     loginUsername = findUsername()
+=======
+    loginUsername = request.user.username
+>>>>>>> Sprint4
     accType = verifyAccount(loginUsername)
     if accType == "d":
         return render(request, 'homepage/homepage.html')
@@ -219,3 +403,55 @@ def home(request):
         return render(request, 'homepage/admin_homepage.html')
     else:
         return redirect('//54.88.218.67')
+<<<<<<< HEAD
+=======
+
+def viewMyDrivers(request):
+    if request.method == 'POST':
+        sponsorUser = request.user.username
+        driverUser = request.POST.get("username")
+        currPoints = int(request.POST.get("point"))
+        nextPoints = int(request.POST.get("pointInput"))
+        # Call this if it's an add
+        if request.POST.get("addBut"):
+            addPoints(sponsorUser, driverUser, currPoints, nextPoints, True)
+        # Call this if it's a remove
+        else:
+            addPoints(sponsorUser, driverUser, currPoints, nextPoints, False)
+        return redirect('//54.88.218.67/home/drivers/')
+    else:
+        currentSponsor = request.user.username
+        driverList = pulldownDrivers(currentSponsor)
+        return render(request, 'points/driverList.html', {'driverList':driverList})
+
+def viewMyProfile(request):
+    currentUser = request.user.username
+    accType = verifyAccount(currentUser)
+    infoList = getUserInfo(currentUser, accType)
+    if accType == "d":
+        return render(request, 'profile/driver_profile.html', {'infoList':infoList})
+    elif accType == "s":
+        return render(request, 'profile/sponsor_profile.html', {'infoList':infoList})
+    elif accType == "a":
+        return render(request, 'profile/admin_profile.html', {'infoList':infoList})
+    else:
+        return redirect('//54.88.218.67')
+
+
+def UpdatePointVal(request):
+    if request.method == 'POST':
+        sUserName = request.user.username
+        sponsorUser = getID(sUserName)
+        dollarValue = request.POST.get("pointVal")
+        # Call this if it's an ad
+        if dollarValue == "10":
+            UpdatePointValue(sponsorUser, dollarValue)
+            return redirect('//54.88.218.67/home/point_value/')
+        else:
+            return redirect('//54.88.218.67/logout/')
+    else:
+        return render(request, 'pointValue/pointVal.html')
+
+
+
+>>>>>>> Sprint4

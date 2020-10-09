@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <form method="POST">
 	{% csrf_token %}
 	{{user_form.as_p}}
@@ -5,3 +6,15 @@
 		<button type="submit" >Sign Up</button>
 	</div>
 </form>
+=======
+{% extends "driverRewards/basic.html"%}
+{% block content %}
+	<form method="POST">
+		{% csrf_token %}
+		{{user_form.as_p}}
+		<div>
+			<button type="submit" >Sign Up</button>
+		</div>
+	</form>
+{% endblock content %}
+>>>>>>> Sprint4

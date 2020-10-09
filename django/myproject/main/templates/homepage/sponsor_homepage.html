@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
     <head>   
 	{% load static %}
@@ -8,3 +9,17 @@
 	<input type="button" id="logout" value="logout">
     </body>
  </html>
+=======
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	{% load static %}
+	<script type="text/javascript" src="{% static "main/home.js" %}"></script>
+        <h1>Sponsor Home</h1>
+        <input type="button" id="logout" value="logout">
+{% endblock content %}
+
+{% block extraButtons %}
+	<a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+	<a class="nav-item nav-link" href="/home/point_value/">Point Value</a>
+{% endblock extraButtons %}
+>>>>>>> Sprint4
