@@ -114,6 +114,41 @@ def pulldownDrivers(sponsor):
         mydb.close()
         return driverNames
 
+def UpdatePointValue(sponsorID, DollarValue):
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+    query = "UPDATE Employers SET PointsPerDollar = '"+str(DollarValue)+"' WHERE ID = '"+str(sponsorID)+"';"
+
+    myCursor.execute(query)
+    mydb.commit()
+
+    myCursor.close()
+    mydb.close()
+
+def getID(userName):
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+
+    myCursor = mydb.cursor()
+    query = "SELECT Employer_ID FROM Sponsors WHERE Username = '"+userName+"';"
+
+    myCursor.execute(query)
+    myResults = myCursor.fetchall()
+    mydb.commit()
+
+    myCursor.close()
+    mydb.close()
+    return myResults
+
 def addUserInfo(userUser,prefName,phoneNum,address):
     mydb = mysql.connector.connect(
         host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
@@ -292,8 +327,8 @@ def viewMyDrivers(request):
 
 def viewMyProfile(request):
     currentUser = request.user.username
-    infoList = getUserInfo(currentUser)
     accType = verifyAccount(currentUser)
+    infoList = getUserInfo(currentUser, accType)
     if accType == "d":
         return render(request, 'profile/driver_profile.html', {'infoList':infoList})
     elif accType == "s":
@@ -304,7 +339,19 @@ def viewMyProfile(request):
         return redirect('//54.88.218.67')
 
 
-
+def UpdatePointVal(request):
+    if request.method == 'POST':
+        sUserName = request.user.username
+        sponsorUser = getID(sUserName)
+        dollarValue = request.POST.get("pointVal")
+        # Call this if it's an ad
+        if dollarValue == "10":
+            UpdatePointValue(sponsorUser, dollarValue)
+            return redirect('//54.88.218.67/home/point_value/')
+        else:
+            return redirect('//54.88.218.67/logout/')
+    else:
+        return render(request, 'pointValue/pointVal.html')
 
 
 
