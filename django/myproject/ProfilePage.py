@@ -33,7 +33,7 @@ def getUserInfo(uname, uType):
     myCursor = mydb.cursor()
     
     if uType == "d":
-        query = "SELECT auth_user.first_name, auth_user.last_name, auth_user.preferred_name, auth_user.email, auth_user.phone, auth_user.address_, Drivers.Point_Total FROM Drivers JOIN auth_user ON Drivers.Username = auth_user.username WHERE auth_user.username = '" + uname + "';"
+        query = "SELECT auth_user.first_name, auth_user.last_name, auth_user.preferred_name, auth_user.email, auth_user.phone, auth_user.address_, Driver_Points.Point_Total FROM Driver_Points JOIN auth_user ON Driver_Points.Driver_User = auth_user.username WHERE auth_user.username = '" + uname + "';"
     elif uType == "s":
          query = "SELECT auth_user.first_name, auth_user.last_name, auth_user.preferred_name, auth_user.email, auth_user.phone, auth_user.address_ FROM Sponsors JOIN auth_user ON Sponsors.Username = auth_user.username WHERE auth_user.username = '" + uname + "';"
     else:

@@ -162,19 +162,25 @@ def pulldownSponsors():
         mydb.close()
         return sponsorNames
 
+class DriverPoints:
+    def __init__(self, pointTotal, employer, employerName):
+        self.pointTotal = pointTotal
+        self.employer = employer
+        self.employerName = employerName
+
 class DriverProfile:
-    def __init__(self, user, first, last, pointTotal, prefName, email, phone, address):
+    def __init__(self, user, first, last, pointObjs, prefName, email, phone, address):
         self.user = user
         self.first = first
         self.last = last
-        self.pointTotal = pointTotal
+        self.pointObjs = pointObjs
         self.prefName = prefName
         self.email = email
         self.phone = phone
         self.address = address
 
 def pullDriverProfile(username):
-    profileObj = DriverProfile("", "", "", 0, "", "", "", "")
+    profileObj = DriverProfile("", "", "", [], "", "", "", "")
 
     # Open connection
     try:
@@ -187,18 +193,20 @@ def pullDriverProfile(username):
 
         # Look for all info for this driver
         myCursor = mydb.cursor()
-        query = "SELECT auth_user.username, first_name, last_name, Point_Total, preferred_name, email, phone, address_ FROM auth_user JOIN Drivers ON Drivers.Username = auth_user.username WHERE auth_user.username = '" + username + "';"
+        query = "SELECT auth_user.username, first_name, last_name, Point_Total, Employer_ID, preferred_name, email, phone, address_, Name_ FROM (auth_user JOIN Driver_Points ON Driver_Points.Driver_User = auth_user.username) JOIN Employers ON Employer_ID = Employers.ID WHERE auth_user.username = '" + username + "';"
         try:
             # Execute query and get results
             myCursor.execute(query)
             myResults = myCursor.fetchall()
 
             # Put query results into the profile object
+            pointList = []
+            pref = ""
             for d in myResults:
-                pref = ""
-                if d[4]:
-                    pref = d[4]
-                profileObj = DriverProfile(d[0], d[1], d[2], d[3], pref, d[5], d[6], d[7])
+                pointList.append(DriverPoints(d[3], d[4], d[9]))
+                if d[5]:
+                    pref = d[5]
+                profileObj = DriverProfile(d[0], d[1], d[2], pointList, pref, d[6], d[7], d[8])
         except Exception as e:
             print("pullDriverProfile(): Failed to query database: " + str(e))
         finally:
@@ -228,9 +236,25 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
             database="DriverRewards"
         )
 
+        # Get the sponsor's employer
+        myCursor = mydb.cursor()
+        query = "SELECT ID FROM Employers JOIN Sponsors ON Employer_ID = ID WHERE Username = '" + sponsor + "';"
+        employerID = -2
+        try:
+            # Execute query and get result
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for id in myResults:
+                employerID = id[0]
+        except Exception as e:
+            print("addPoints(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
         # Update driver's points
         myCursor = mydb.cursor()
-        query = "UPDATE Drivers SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "';"
+        query = "UPDATE Driver_Points SET Point_Total = " + str(newTotal) + " WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(employerID) + ";"
         try:
             # Execute query and commit
             myCursor.execute(query)
@@ -251,7 +275,6 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
 
             for i in myResults:
               myid = int(i[0]) + 1
-              break
         except Exception as e:
             print("addPoints(): Failed to query database: " + str(e))
         finally:
@@ -261,7 +284,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
         today = datetime.today().strftime("%Y-%m-%d")
         # Update Point_History
         myCursor = mydb.cursor()
-        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
+        query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(employerID) + ", '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
         try:
             # Execute query and commit
             myCursor.execute(query)
@@ -361,7 +384,7 @@ def pulldownDrivers(sponsor):
 
         # Look for all driver under the current sponsor
         myCursor = mydb.cursor()
-        query = "SELECT auth_user.first_name, auth_user.last_name, Drivers.Point_Total, auth_user.username FROM (Drivers JOIN Sponsors ON Drivers.Employer_ID = Sponsors.Employer_ID) JOIN auth_user ON Drivers.Username = auth_user.username WHERE Sponsors.Username LIKE '" + sponsor + "' ORDER BY auth_user.last_name, auth_user.first_name;"
+        query = "SELECT auth_user.first_name, auth_user.last_name, Driver_Points.Point_Total, auth_user.username FROM (Driver_Points JOIN Sponsors ON Driver_Points.Employer_ID = Sponsors.Employer_ID) JOIN auth_user ON Driver_Points.Driver_User = auth_user.username WHERE Sponsors.Username LIKE '" + sponsor + "' ORDER BY auth_user.last_name, auth_user.first_name;"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -444,15 +467,16 @@ def addUserTypeInfo(userUser,userType):
     myCursor = mydb.cursor()
 
     if userType is 'Driver':
-        query = "INSERT INTO Drivers (Username, Employer_ID, Point_Total) VALUES ('"+userUser+"', -1, 0);"
-
+        query = "INSERT INTO Drivers (Username) VALUES ('"+userUser+"');" 
+        query2 = "INSERT INTO Driver_Points (Driver_User, Employer_ID, Point_Total) VALUES ('"+userUser+"',-1,0);"
+        myCursor.execute(query)
+        myCursor.execute(query2)
     elif userType is 'Sponsor':
         query = "INSERT INTO Sponsors (Username, Employer_ID) VALUES ('"+userUser+"',-1);"
-        
+        myCursor.execute(query)
     else:
         query = "INSERT INTO Admins (Username) VALUES ('"+userUser+"');"
-        
-    myCursor.execute(query)
+        myCursor.execute(query)
     mydb.commit()
     myCursor.close()
     mydb.close()
