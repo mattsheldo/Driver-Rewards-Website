@@ -1,7 +1,7 @@
 -- Create tables for CPSC 4910 project
 CREATE TABLE Employers(
   ID INT NOT NULL,
-  Name_ VARCHAR(50) NOT NULL,
+  Name_ VARCHAR(150) NOT NULL,
   PointsPerDollar DECIMAL(6, 2) NOT NULL,     -- 1 by default -- I don't expect more than 1,000 points/dollar
   CONSTRAINT EmpPK PRIMARY KEY(ID)
 );
@@ -14,18 +14,6 @@ CREATE TABLE Invoices(
   Paid BOOLEAN NOT NULL,     -- False upon invoice creation until paid off
   CONSTRAINT InvPK PRIMARY KEY(ID),
   CONSTRAINT InvEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
-);
-
-CREATE TABLE Accounts(
-  Username VARCHAR(20) NOT NULL,
-  Encrypted_Password VARCHAR(80) NOT NULL,     -- Store the hashed password assuming SHA-256 method
-  First_Name VARCHAR(20) NOT NULL,
-  Last_Name VARCHAR(20) NOT NULL,
-  Preferred_Name VARCHAR(50),
-  Phone_Number CHAR(10) NOT NULL,
-  Email VARCHAR(100) NOT NULL,
-  Address_ VARCHAR(200) NOT NULL,
-  CONSTRAINT AccPK PRIMARY KEY(Username)
 );
 
 CREATE TABLE Drivers(
