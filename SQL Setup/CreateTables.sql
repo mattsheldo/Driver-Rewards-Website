@@ -18,10 +18,8 @@ CREATE TABLE Invoices(
 
 CREATE TABLE Drivers(
   Username VARCHAR(150) NOT NULL,
-  Employer_ID INT NOT NULL,
   CONSTRAINT DrPK PRIMARY KEY(Username),
-  CONSTRAINT DrAccFK FOREIGN KEY(Username) REFERENCES auth_user(username),
-  CONSTRAINT DrEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
+  CONSTRAINT DrAccFK FOREIGN KEY(Username) REFERENCES auth_user(username)
 );
 
 CREATE TABLE Sponsors(
