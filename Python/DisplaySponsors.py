@@ -30,11 +30,11 @@ def pulldownSponsors():
             for d in myResults:
                 sponsorNames.append(SponsorListItem(d[0], d[1], d[2]))
         except Exception as e:
-            print("pulldownDrivers(): Failed to query database: " + str(e))
+            print("pulldownSponsors(): Failed to query database: " + str(e))
         finally:
             myCursor.close()
     except Exception as e:
-        print("pulldownDrivers(): Failed to connect: " + str(e))
+        print("pulldownSponsors(): Failed to connect: " + str(e))
     finally:
         mydb.close()
         return sponsorNames
