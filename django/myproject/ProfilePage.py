@@ -56,4 +56,5 @@ def getUserInfo(uname, uType):
     myCursor.close()
     mydb.close()
     return infoList
+
                                                                                                                     

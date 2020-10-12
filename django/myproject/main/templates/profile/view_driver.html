@@ -1,0 +1,21 @@
+{% extends "driverRewards/basic.html"%}
+{% block content %}
+	<h1>{{ driverObj.first }} {{ driverObj.last }}'s Profile</h1>
+	<p>Username: {{ driverObj.user }}</p>
+	<p>First Name: {{ driverObj.first }}</p>
+	<p>Last Name: {{ driverObj.last }}</p>
+	<p>Preferred Name: {{ driverObj.prefName }}</p>
+	<p>Email Address: {{ driverObj.email }}</p>
+	<p>Phone Number: {{ driverObj.phone }}</p>
+	<p>Address: {{ driverObj.address }}</p>
+{% endblock content %}
+
+{% block sidebar %}
+	<h3>{{ driverObj.first }} {{ driverObj.last }}'s Points:</h3>
+	<p>Current Total: {{ driverObj.pointTotal }}</p>
+{% endblock sidebar%}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+        <a class="nav-item nav-link" href="/home/point_value/">Point Value</a>
+{% endblock extraButtons %}

@@ -1,0 +1,19 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  {% load static %}
+  <h1>Sponsor List</h1>
+  <p>List of all sponsors</p>
+  <div id="dList">
+  {% for sponsor in sponsorList %}
+  	<a href="//54.88.218.67/home/all_sponsors/viewProfile/?uname={{ sponsor.user }}" style="color: black; text-decoration: none;">{{ sponsor.last }}, {{ sponsor.first }}</a>
+  {% endfor %}
+  </div>
+  
+  <script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+	<a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+	<a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+{% endblock extraButtons %}

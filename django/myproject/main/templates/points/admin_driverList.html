@@ -2,11 +2,11 @@
 {% block content %}
   {% load static %}
   <h1>Driver List</h1>
-  <p>List of each driver in the company with their current point total</p>
+  <p>List of all drivers with their current point total</p>
   <div id="dList">
   {% for driver in driverList %}
-  	<a href="//54.88.218.67/home/drivers/viewProfile/?uname={{ driver.user }}" style="color: black; text-decoration: none;">{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }} points</a>
-	<form method="POST", action="/home/drivers/">
+  	<a href="//54.88.218.67/home/all_drivers/viewProfile/?uname={{ driver.user }}" style="color: black; text-decoration: none;">{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }} points</a>
+	<form method="POST", action="/home/all_drivers/">
 		{% csrf_token %}
 		<input type="number" name="pointInput" id="pointInputID">
 		<input type="submit" value="Add" id="addButID" name="addBut">
@@ -21,6 +21,7 @@
 {% endblock content %}
 
 {% block extraButtons %}
-        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
-	<a class="nav-item nav-link" href="/home/point_value/">Point Value</a>
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+	<a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+	<a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
 {% endblock extraButtons %}

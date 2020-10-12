@@ -1,12 +1,213 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
-#from UserCreation import addUserInfo
 from ProfilePage import getUserInfo 
-from .forms import UserForm
+from UpdateProfilePage import updateUserInfo
+from .forms import UserForm, UpdateForm
 
 import mysql.connector
 
 from datetime import datetime
+
+class SponsorProfile:
+    def __init__(self, user, first, last, prefName, email, phone, address):
+        self.user = user
+        self.first = first
+        self.last = last
+        self.prefName = prefName
+        self.email = email
+        self.phone = phone
+        self.address = address
+
+def pullAdminProfile(username):
+    profileObj = SponsorProfile("", "", "", "", "", "", "")
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for all info for this driver
+        myCursor = mydb.cursor()
+        query = "SELECT auth_user.username, first_name, last_name, preferred_name, email, phone, address_ FROM auth_user JOIN Admins ON Admins.Username = auth_user.username WHERE auth_user.username = '" + username + "';"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Put query results into the profile object
+            for d in myResults:
+                pref = ""
+                if d[3]:
+                    pref = d[3]
+                profileObj = SponsorProfile(d[0], d[1], d[2], pref, d[4], d[5], d[6])
+        except Exception as e:
+            print("pullAdminProfile(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pullAdminProfile(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return profileObj
+
+def pullSponsorProfile(username):
+    profileObj = SponsorProfile("", "", "", "", "", "", "")
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for all info for this driver
+        myCursor = mydb.cursor()
+        query = "SELECT auth_user.username, first_name, last_name, preferred_name, email, phone, address_ FROM auth_user JOIN Sponsors ON Sponsors.Username = auth_user.username WHERE auth_user.username = '" + username + "';"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Put query results into the profile object
+            for d in myResults:
+                pref = ""
+                if d[3]:
+                    pref = d[3]
+                profileObj = SponsorProfile(d[0], d[1], d[2], pref, d[4], d[5], d[6])
+        except Exception as e:
+            print("pullSponsorProfile(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pullSponsorProfile(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return profileObj
+
+class SponsorListItem:
+    def __init__(self, first, last, user):
+        self.first = first
+        self.last = last
+        self.user = user
+
+def pulldownAdmins():
+    adminNames = []
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for all sponsors
+        myCursor = mydb.cursor()
+        query = "SELECT first_name, last_name, auth_user.username FROM auth_user JOIN Admins ON Admins.Username = auth_user.username;"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Put query results into a list
+            for d in myResults:
+                adminNames.append(SponsorListItem(d[0], d[1], d[2]))
+        except Exception as e:
+            print("pulldownAdmins(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pulldownAdmins(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return adminNames
+
+def pulldownSponsors():
+    sponsorNames = []
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for all sponsors
+        myCursor = mydb.cursor()
+        query = "SELECT first_name, last_name, auth_user.username FROM auth_user JOIN Sponsors ON Sponsors.Username = auth_user.username;"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Put query results into a list
+            for d in myResults:
+                sponsorNames.append(SponsorListItem(d[0], d[1], d[2]))
+        except Exception as e:
+            print("pulldownSponsors(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pulldownSponsors(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return sponsorNames
+
+class DriverProfile:
+    def __init__(self, user, first, last, pointTotal, prefName, email, phone, address):
+        self.user = user
+        self.first = first
+        self.last = last
+        self.pointTotal = pointTotal
+        self.prefName = prefName
+        self.email = email
+        self.phone = phone
+        self.address = address
+
+def pullDriverProfile(username):
+    profileObj = DriverProfile("", "", "", 0, "", "", "", "")
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for all info for this driver
+        myCursor = mydb.cursor()
+        query = "SELECT auth_user.username, first_name, last_name, Point_Total, preferred_name, email, phone, address_ FROM auth_user JOIN Drivers ON Drivers.Username = auth_user.username WHERE auth_user.username = '" + username + "';"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Put query results into the profile object
+            for d in myResults:
+                pref = ""
+                if d[4]:
+                    pref = d[4]
+                profileObj = DriverProfile(d[0], d[1], d[2], d[3], pref, d[5], d[6], d[7])
+        except Exception as e:
+            print("pullDriverProfile(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pullDriverProfile(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return profileObj
 
 def addPoints(sponsor, driver, currentPoints, newPoints, addB):
     newTotal = 0
@@ -74,6 +275,71 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
     finally:
         mydb.close()
 
+def addPointsAdmin(admin, driver, currentPoints, newPoints, addB):
+    newTotal = 0
+    changeType = ""
+    if addB:
+        newTotal = currentPoints + newPoints
+        changeType = "add"
+    else:
+        newTotal = currentPoints - newPoints
+        changeType = "sub"
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Update driver's points
+        myCursor = mydb.cursor()
+        query = "UPDATE Drivers SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "';"
+        try:
+            # Execute query and commit
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("addPoints(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Get the last used ID from Point_History
+        myid = 0
+        myCursor = mydb.cursor()
+        query = "SELECT ID FROM Point_History ORDER BY ID DESC LIMIT 1;"
+        try:
+            # Execute query
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for i in myResults:
+              myid = int(i[0]) + 1
+        except Exception as e:
+            print("addPoints(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Get current date
+        today = datetime.today().strftime("%Y-%m-%d")
+        # Update Point_History
+        myCursor = mydb.cursor()
+        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Admin_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + admin + "');"
+        try:
+            # Execute query and commit
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("addPoints(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("addPoints(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+
 class DriverListItem:
     def __init__(self, first, last, pointTotal, user):
         self.first = first
@@ -95,7 +361,7 @@ def pulldownDrivers(sponsor):
 
         # Look for all driver under the current sponsor
         myCursor = mydb.cursor()
-        query = "SELECT auth_user.first_name, auth_user.last_name, Drivers.Point_Total, auth_user.username FROM (Drivers JOIN Sponsors ON Drivers.Employer_ID = Sponsors.Employer_ID) JOIN auth_user ON Drivers.Username = auth_user.username WHERE Sponsors.Username = '" + sponsor + "' ORDER BY auth_user.last_name, auth_user.first_name;"
+        query = "SELECT auth_user.first_name, auth_user.last_name, Drivers.Point_Total, auth_user.username FROM (Drivers JOIN Sponsors ON Drivers.Employer_ID = Sponsors.Employer_ID) JOIN auth_user ON Drivers.Username = auth_user.username WHERE Sponsors.Username LIKE '" + sponsor + "' ORDER BY auth_user.last_name, auth_user.first_name;"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -286,10 +552,7 @@ def createAcc(request):
             userType = user_form.cleaned_data.get('type_of_user_choices')
             userType = dict(user_form.fields['type_of_user_choices'].choices)[userType]
             addUserTypeInfo(uname, userType)
-            #if uname == "testuser" and phone == "3213214321" and address == "test" and prefName == "test" and userType == "Driver":
             return redirect('//54.88.218.67/')
-            #else:
-                #return redirect('//54.88.218.67/logout/')
     else:
         user_form = UserForm()
     return render(request, 'createAcc/register.html', {'user_form':user_form})
@@ -325,6 +588,29 @@ def viewMyDrivers(request):
         driverList = pulldownDrivers(currentSponsor)
         return render(request, 'points/driverList.html', {'driverList':driverList})
 
+def viewAllDrivers(request):
+    if request.method == 'POST':
+        adminUser = request.user.username
+        driverUser = request.POST.get("username")
+        currPoints = int(request.POST.get("point"))
+        nextPoints = int(request.POST.get("pointInput"))
+        if request.POST.get("addBut"):
+            addPointsAdmin(adminUser, driverUser, currPoints, nextPoints, True)
+        else:
+            addPointsAdmin(adminUser, driverUser, currPoints, nextPoints, False)
+        return redirect('//54.88.218.67/home/all_drivers/')
+    else:
+        driverList = pulldownDrivers('%')
+        return render(request, 'points/admin_driverList.html', {'driverList':driverList})
+
+def viewAllSponsors(request):
+    sponsorList = pulldownSponsors()
+    return render(request, 'points/sponsorList.html', {'sponsorList':sponsorList})
+
+def viewAllAdmins(request):
+    adminList = pulldownAdmins()
+    return render(request, 'points/adminList.html', {'adminList':adminList})
+
 def viewMyProfile(request):
     currentUser = request.user.username
     accType = verifyAccount(currentUser)
@@ -338,6 +624,26 @@ def viewMyProfile(request):
     else:
         return redirect('//54.88.218.67')
 
+def viewDriverProfile(request):
+    # Get the driver username from the GET params
+    uname = request.GET['uname']
+    driverObj = pullDriverProfile(uname)
+    return render(request, 'profile/view_driver.html', {'driverObj':driverObj})
+
+def adviewDriverProfile(request):
+    uname = request.GET['uname']
+    driverObj = pullDriverProfile(uname)
+    return render(request, 'profile/admin_view_driver.html', {'driverObj':driverObj})
+
+def adviewSponsorProfile(request):
+    uname = request.GET['uname']
+    sponsorObj = pullSponsorProfile(uname)
+    return render(request, 'profile/admin_view_sponsor.html', {'sponsorObj':sponsorObj})
+
+def adviewAdminProfile(request):
+    uname = request.GET['uname']
+    adminObj = pullAdminProfile(uname)
+    return render(request, 'profile/admin_view_admin.html', {'adminObj':adminObj})
 
 def UpdatePointVal(request):
     if request.method == 'POST':
@@ -353,5 +659,25 @@ def UpdatePointVal(request):
     else:
         return render(request, 'pointValue/pointVal.html')
 
+
+def updateMyProfile(request):
+    if request.method == 'POST':
+        daUser = request.user.username
+        user_form = UpdateForm(request.POST)
+        if user_form.is_valid():
+            user_form.save()
+
+            #Fill in additional information in user database
+            fname = user_form.cleaned_data.get('fname')
+            lname = user_form.cleaned_data.get('lname')
+            email = user_form.cleaned_data.get('email')
+            phone = user_form.cleaned_data.get('phone')
+            address = user_form.cleaned_data.get('address')
+            prefName = user_form.cleaned_data.get('prefName')
+            updateUserInfo(daUser, fname, lname, prefName, email, phone, address)
+            return redirect('//54.88.218.67/home/profile/')
+    else:
+        user_form = UpdateForm()
+        return render(request, 'profile/update.html', {'user_form':user_form})        
 
 
