@@ -38,7 +38,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
 
         # Update driver's points
         myCursor = mydb.cursor()
-        query = "UPDATE Driver_Points SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "' AND Employer_ID = " + str(employerID) + ";"
+        query = "UPDATE Driver_Points SET Point_Total = " + str(newTotal) + " WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(employerID) + ";"
         try:
             # Execute query and commit
             myCursor.execute(query)
