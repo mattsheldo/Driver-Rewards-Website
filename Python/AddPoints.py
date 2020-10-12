@@ -20,9 +20,25 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
             database="DriverRewards"
         )
 
+        # Get the sponsor's employer
+        myCursor = mydb.cursor()
+        query = "SELECT ID FROM Employers JOIN Sponsors ON Employer_ID = ID WHERE Username = '" + sponsor + "';"
+        employerID = -2
+        try:
+            # Execute query and get result
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for id in myResults:
+                employerID = id[0]
+        except Exception as e:
+            print("addPoints(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
         # Update driver's points
         myCursor = mydb.cursor()
-        query = "UPDATE Drivers SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "';"
+        query = "UPDATE Driver_Points SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "' AND Employer_ID = " + str(employerID) + ";"
         try:
             # Execute query and commit
             myCursor.execute(query)
@@ -52,7 +68,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
         today = datetime.today().strftime("%Y-%m-%d")
         # Update Point_History
         myCursor = mydb.cursor()
-        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
+        query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(employerID) + ", '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
         try:
             # Execute query and commit
             myCursor.execute(query)
