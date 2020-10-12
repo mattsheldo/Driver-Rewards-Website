@@ -561,8 +561,9 @@ def createAcc(request):
 def home(request):
     loginUsername = request.user.username
     accType = verifyAccount(loginUsername)
+    infoList = getUserInfo(loginUsername, accType)
     if accType == "d":
-        return render(request, 'homepage/homepage.html')
+        return render(request, 'homepage/homepage.html', {'infoList':infoList})
     elif accType == "s":
         return render(request, 'homepage/sponsor_homepage.html')
     elif accType == "a":
@@ -663,21 +664,42 @@ def UpdatePointVal(request):
 def updateMyProfile(request):
     if request.method == 'POST':
         daUser = request.user.username
-        user_form = UpdateForm(request.POST)
-        if user_form.is_valid():
-            user_form.save()
+        form = UpdateForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
 
             #Fill in additional information in user database
-            fname = user_form.cleaned_data.get('fname')
-            lname = user_form.cleaned_data.get('lname')
-            email = user_form.cleaned_data.get('email')
-            phone = user_form.cleaned_data.get('phone')
-            address = user_form.cleaned_data.get('address')
-            prefName = user_form.cleaned_data.get('prefName')
+            fname = form.cleaned_data.get('fname')
+            lname = form.cleaned_data.get('lname')
+            email = form.cleaned_data.get('email')
+            phone = form.cleaned_data.get('phone')
+            address = form.cleaned_data.get('address')
+            prefName = form.cleaned_data.get('prefName')
             updateUserInfo(daUser, fname, lname, prefName, email, phone, address)
             return redirect('//54.88.218.67/home/profile/')
     else:
-        user_form = UpdateForm()
-        return render(request, 'profile/update.html', {'user_form':user_form})        
+        daUser = request.user.username
+        accType = verifyAccount(daUser)
+        infoList = getUserInfo(daUser, accType)
+        if accType == 'd':
+            initial_dict = {
+                "fname": infoList[0].fname,
+                "lname": infoList[0].lname,
+                "email": infoList[0].email,
+                "phone": infoList[0].phone,
+                "address": infoList[0].address,
+                "prefName": infoList[0].pname,
+            }
+        else:
+            initial_dict = {
+                "fname": infoList[0].fname2,
+                "lname": infoList[0].lname2,
+                "email": infoList[0].email2,
+                "phone": infoList[0].phone2,
+                "address": infoList[0].address2,
+                "prefName": infoList[0].pname2,
+            }
+        form = UpdateForm(request.user, initial=initial_dict)
+    return render(request, 'profile/update.html', {'form':form})        
 
 

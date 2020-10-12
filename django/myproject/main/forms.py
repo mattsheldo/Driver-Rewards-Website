@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
 class UserForm(UserCreationForm):
-    prefName = forms.CharField(max_length=128)
-    phone = forms.CharField(max_length=128)
-    address = forms.CharField(max_length=128)
+    prefName = forms.CharField(label='Preferred Name', max_length=128)
+    phone = forms.CharField(label='Phone Number', max_length=128)
+    address = forms.CharField(label='Address', max_length=128)
 
     DRIVER = 'DR'
     SPONSOR = 'SP'
@@ -24,12 +24,15 @@ class UserForm(UserCreationForm):
 
 
 class UpdateForm(PasswordChangeForm):
-    fname = forms.CharField(max_length=128)
-    lname = forms.CharField(max_length=128)
-    prefName = forms.CharField(max_length=128)
+    fname = forms.CharField(label='First Name', max_length=128)
+    lname = forms.CharField(label='Last Name', max_length=128)
+    prefName = forms.CharField(label='Preferred Name', max_length=128)
     email = forms.EmailField(max_length=128)
-    phone = forms.CharField(max_length=128)
-    address = forms.CharField(max_length=128)
+    phone = forms.CharField(label='Phone Number', max_length=128)
+    address = forms.CharField(label='Address', max_length=128)
 
     class Meta:
         fields = {'old_password','new_password1','new_password2','fname','lname','prefName','email','phone','address',}
+
+
+
