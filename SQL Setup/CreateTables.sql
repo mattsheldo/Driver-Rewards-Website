@@ -64,7 +64,7 @@ CREATE TABLE Point_History(
   CONSTRAINT PntAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
   CONSTRAINT PntSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
   CONSTRAINT PntAdmFK FOREIGN KEY(Admin_Id) REFERENCES Admins(Username),
-  CONSTRAINT PntEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(Employer_ID)
+  CONSTRAINT PntEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
 );
 
 -- Create an entry for each item in a cart
@@ -80,7 +80,7 @@ CREATE TABLE Shopping_Cart_Items(
   CONSTRAINT CrtAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
   CONSTRAINT CrtSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
   CONSTRAINT CrtAdmFK FOREIGN KEY(Admin_Id) REFERENCES Admins(Username),
-  CONSTRAINT CrtEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(Employer_ID)
+  CONSTRAINT CrtEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
 );
 
 -- Create an entry for each item purchased
@@ -98,7 +98,7 @@ CREATE TABLE Purchase_History(
   CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
   CONSTRAINT PchSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
   CONSTRAINT PchAdmFK FOREIGN KEY(Admin_Id) REFERENCES Admins(Username),
-  CONSTRAINT PchEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(Employer_ID)
+  CONSTRAINT PchEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
 );
 
 CREATE TABLE Driver_Points(
@@ -107,5 +107,5 @@ CREATE TABLE Driver_Points(
   Point_Total INT NOT NULL,
   CONSTRAINT DPPk PRIMARY KEY(Driver_User, Employer_ID),
   CONSTRAINT DPDrFK FOREIGN KEY(Driver_User) REFERENCES Drivers(Username),
-  CONSTRAINT DPEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(Employer_ID)
+  CONSTRAINT DPEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
 );
