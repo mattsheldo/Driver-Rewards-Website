@@ -82,7 +82,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
     finally:
         mydb.close()
 
-def addPointsAdmin(admin, driver, currentPoints, newPoints, addB):
+def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
     newTotal = 0
     changeType = ""
     if addB:
@@ -103,7 +103,7 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB):
 
         # Update driver's points
         myCursor = mydb.cursor()
-        query = "UPDATE Drivers SET Point_Total = " + str(newTotal) + " WHERE Username = '" + driver + "';"
+        query = "UPDATE Driver_Points SET Point_Total = " + str(newTotal) + " WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(employerID) + ";"
         try:
             # Execute query and commit
             myCursor.execute(query)
@@ -133,7 +133,7 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB):
         today = datetime.today().strftime("%Y-%m-%d")
         # Update Point_History
         myCursor = mydb.cursor()
-        query = "INSERT INTO Point_History (ID, Username, Date_, Point_Cost, Type_Of_Change, Admin_ID) VALUES (" + str(myid) + ", '" + driver + "', '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + admin + "');"
+        query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Admin_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(employerID) + ", '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + admin + "');"
         try:
             # Execute query and commit
             myCursor.execute(query)
