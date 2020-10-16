@@ -2,18 +2,23 @@
 {% block content %}
   {% load static %}
   <h1>Driver List</h1>
-  <p>List of all drivers with their current point total</p>
+  <p>List of all drivers</p>
   <div id="dList">
   {% for driver in driverList %}
-  	<a href="//54.88.218.67/home/all_drivers/viewProfile/?uname={{ driver.user }}" style="color: black; text-decoration: none;">{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }} points</a>
-	<form method="POST", action="/home/all_drivers/">
-		{% csrf_token %}
-		<input type="number" name="pointInput" id="pointInputID">
-		<input type="submit" value="Add" id="addButID" name="addBut">
-		<input type="submit" value="Remove" id="removeButID" name="removeBut">
-		<input type="hidden" id="userid" name="username" value="{{ driver.user }}">
-		<input type="hidden" id="pointid" name="point" value="{{ driver.pointTotal }}">
-	</form>
+  	<strong><a href="//54.88.218.67/home/all_drivers/viewProfile/?uname={{ driver.user }}" style="color: black; text-decoration: none;">{{ driver.last }}, {{ driver.first }}</a></strong>
+	{% for obj in driver.pointsObj %}
+		<form method="POST", action="/home/all_drivers/">
+                	{% csrf_token %}
+			<label>{{ obj.employerName }}: {{ obj.pointTotal }} points</label>
+			<br>
+                	<input type="number" name="pointInput" id="pointInputID">
+                	<input type="submit" value="Add" id="addButID" name="addBut">
+                	<input type="submit" value="Remove" id="removeButID" name="removeBut">
+                	<input type="hidden" id="userid" name="username" value="{{ driver.user }}">
+                	<input type="hidden" id="pointid" name="point" value="{{ obj.pointTotal }}">
+			<input type="hidden" id="empID" name="emp" value="{{ obj.employer }}">
+        	</form>
+	{% endfor %}
   {% endfor %}
   </div>
   

@@ -3,6 +3,8 @@
   <h1>Point Value</h1>
   <form method="POST" action"home/point_value/">
      {% csrf_token %}
+     <p>Current Value:</p>
+     <p>${{dollarValue}} Dollars per 1 Point</p>
         <input type="number" name="pointVal" id="pointValID">
         <input type="submit" value="Submit" id="DollarValue" name="Dollars">
        <!-- <input type="submit" value="Remove" id="removeButID" name="removeBut">
