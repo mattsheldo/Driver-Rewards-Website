@@ -3,6 +3,7 @@ CREATE TABLE Employers(
   ID INT NOT NULL,
   Name_ VARCHAR(150) NOT NULL,
   PointsPerDollar DECIMAL(6, 2) NOT NULL,     -- 1 by default -- I don't expect more than 1,000 points/dollar
+  Join_Code INT NOT NULL,
   CONSTRAINT EmpPK PRIMARY KEY(ID)
 );
 
