@@ -1,4 +1,5 @@
 import mysql.connector
+from random import choice
 
 def createCompany(sponsor, name):
     # Open connection
@@ -25,9 +26,26 @@ def createCompany(sponsor, name):
         finally:
             myCursor.close()
 
+        # Get the code of every company in the database already
+        codeList = []
+        myCursor = mydb.cursor()
+        query = "SELECT Join_Code FROM Employers;"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for c in myResults:
+                codeList.append(c[0])
+        except Exception as e:
+            print("createCompany(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+        # Get a random join code
+        code = choice([i for i in range(100000, 999999) if i not in codeList])
+
         # Create the Employer
         myCursor = mydb.cursor()
-        query = "INSERT INTO Employers VALUES (" + str(myID) + ", '" + name + "', 100, 0);"
+        query = "INSERT INTO Employers VALUES (" + str(myID) + ", '" + name + "', 100, " + str(code) + ");"
         try:
             # Execute query and get results
             myCursor.execute(query)
