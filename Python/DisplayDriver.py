@@ -31,7 +31,7 @@ def pullDriverProfile(username):
 
         # Look for all info for this driver
         myCursor = mydb.cursor()
-        query = "SELECT auth_user.username, first_name, last_name, Point_Total, Employer_ID, preferred_name, email, phone, address_, Name_ FROM (auth_user JOIN Driver_Points ON Driver_Points.Driver_User = auth_user.username) JOIN Employers ON Employer_ID = Employers.ID WHERE auth_user.username = '" + username + "';"
+        query = "SELECT auth_user.username, first_name, last_name, Point_Total, Employer_ID, preferred_name, email, phone, address_, Name_, Approved FROM (auth_user JOIN Driver_Points ON Driver_Points.Driver_User = auth_user.username) JOIN Employers ON Employer_ID = Employers.ID WHERE auth_user.username = '" + username + "';"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -41,7 +41,8 @@ def pullDriverProfile(username):
             pointList = []
             pref = ""
             for d in myResults:
-                pointList.append(DriverPoints(d[3], d[4], d[9]))
+                if d[10] == True:
+                    pointList.append(DriverPoints(d[3], d[4], d[9]))
                 if d[5]:
                     pref = d[5]
             profileObj = DriverProfile(d[0], d[1], d[2], pointList, pref, d[6], d[7], d[8])
