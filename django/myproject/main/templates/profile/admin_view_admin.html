@@ -8,6 +8,8 @@
 	<p>Email Address: {{ adminObj.email }}</p>
 	<p>Phone Number: {{ adminObj.phone }}</p>
 	<p>Address: {{ adminObj.address }}</p>
+	<a href="//54.88.218.67/home/all_admins/viewProfile/edit/?uname={{ adminObj.user }}">Click Here to Edit Admin's Personal Info</a> <br>
+	<a href="//54.88.218.67/home/all_admins/viewProfile/edit/pass/?uname={{ adminObj.user }}">Click Here to Change Admin's Password</a>
 {% endblock content %}
 
 {% block extraButtons %}

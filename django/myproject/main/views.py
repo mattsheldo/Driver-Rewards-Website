@@ -4,12 +4,16 @@ from viewsFunctions.ProfilePage import getUserInfo
 from viewsFunctions.UpdateProfilePage import updateUserInfo
 from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pullSponsorProfile
 from viewsFunctions.SponsorList import SponsorListItem, pulldownAdmins, pulldownSponsors
-from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin
-from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers
-from viewsFunctions.PointsPerDollar import UpdatePVal, getID
+from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile
+from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers
+from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile
 from viewsFunctions.NewUserReg import addUserInfo, addUserTypeInfo
 from viewsFunctions.Account import verifyAccount
-from .forms import UserForm, UpdateForm
+from viewsFunctions.CreateCompany import createCompany, joinCompany
+from viewsFunctions.FindCompany import applyToCompany
+from viewsFunctions.ApproveDriver import approveDriver
+from .forms import UserForm, UpdateForm, UpdatePass
+from django.contrib.auth.models import User
 
 import mysql.connector
 
@@ -44,8 +48,10 @@ def home(request):
     infoList = getUserInfo(loginUsername, accType)
     driverObj = pullDriverProfile(loginUsername)
     if accType == "d":
-        return render(request, 'homepage/homepage.html', {'infoList':infoList, 'driverObj':driverObj})
+        return render(request, 'homepage/homepage.html', {'driverObj':driverObj})
     elif accType == "s":
+        if request.method == "POST":
+            print("create company")
         return render(request, 'homepage/sponsor_homepage.html')
     elif accType == "a":
         return render(request, 'homepage/admin_homepage.html')
@@ -111,7 +117,8 @@ def viewMyProfile(request):
 def viewDriverProfile(request):
     # Get the driver username from the GET params
     uname = request.GET['uname']
-    driverObj = pullDriverProfile(uname)
+    sponsorUser = request.user.username
+    driverObj = spPullDriverProfile(uname, sponsorUser)
     return render(request, 'profile/view_driver.html', {'driverObj':driverObj})
 
 def adviewDriverProfile(request):
@@ -133,23 +140,50 @@ def UpdatePointVal(request):
     if request.method == 'POST':
         sUserName = request.user.username
         sponsorUser = getID(sUserName)
-        dollarValue = request.POST.get("pointVal")
-        # Call this if it's an ad
-        if dollarValue:
-            UpdatePVal(sponsorUser, dollarValue)
-            return render(request, 'pointValue/pointVal.html', {'dollarValue':dollarValue})
+        # If the sponsor is currently unemployed
+        if sponsorUser == -1:
+            if request.POST.get("join"):
+                compCode = request.POST.get("compCode")
+                joinCompany(sUserName, compCode)
+            else:
+                compName = request.POST.get("compName")
+                createCompany(sUserName, compName)
+            return redirect('//54.88.218.67/home/point_value/')
         else:
-            return redirect('//54.88.218.67/logout/')
+            if request.POST.get("pointVal"):
+                dollarValue = request.POST.get("pointVal")
+                if dollarValue:
+                    UpdatePVal(sponsorUser, dollarValue)
+            else:
+                # The sponsor hit "accept"
+                if request.POST.get("accept"):
+                    approveDriver(request.POST.get("dUser"), sUserName, True)
+                # The sponsor hit "reject"
+                else:
+                    approveDriver(request.POST.get("dUser"), sUserName, False)
+            return redirect('//54.88.218.67/home/point_value/')
+
+    companyProf = pullCompanyProfile(request.user.username)
+    driverList = pullPendingDrivers(request.user.username)
+    # If the sponsor is currently unemployed
+    if companyProf.name == "unemployed":
+        return render(request, 'pointValue/createComp.html')
     else:
-        return render(request, 'pointValue/pointVal.html')
+        return render(request, 'pointValue/pointVal.html', {'companyProf':companyProf, 'driverList':driverList})
 
+def viewMyCompanies(request):
+    if request.method == 'POST':
+        driverUser = request.user.username
+        code = request.POST.get("compCode")
+        applyToCompany(driverUser, code)
+    return render(request, 'pointValue/viewComps.html')
 
-def updateMyProfile(request):
+def updateMyPersonalInfo(request):
     if request.method == 'POST':
         daUser = request.user.username
-        form = UpdateForm(request.user, request.POST)
+        form = UpdateForm(request.POST)
         if form.is_valid():
-            form.save()
+            #form.save()
 
             #Fill in additional information in user database
             fname = form.cleaned_data.get('fname')
@@ -182,7 +216,97 @@ def updateMyProfile(request):
                 "address": infoList[0].address2,
                 "prefName": infoList[0].pname2,
             }
-        form = UpdateForm(request.user, initial=initial_dict)
+        form = UpdateForm(initial=initial_dict)
     return render(request, 'profile/update.html', {'form':form})        
+
+def updateMyPass(request):
+    if request.method == "POST":
+        daUser = request.user.username
+        user = User.objects.get(username=daUser)
+        accType = verifyAccount(daUser)
+        form = UpdatePass(user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('//54.88.218.67/home/profile/')
+    else:
+        daUser = request.user.username
+        user = User.objects.get(username=daUser)
+        accType = verifyAccount(daUser)
+        form = UpdatePass(user)
+    return render(request, 'profile/update.html', {'form':form})
+
+def updateNotMyPersonalInfo(request):
+    if request.method == "POST":
+        daUser = request.GET['uname']
+        #user = User.objects.get(username=daUser)
+        accType = verifyAccount(daUser)
+        form = UpdateForm(request.POST)
+        if form.is_valid():
+            #form.save()
+
+            #Fill in additional information in user database
+            fname = form.cleaned_data.get('fname')
+            lname = form.cleaned_data.get('lname')
+            email = form.cleaned_data.get('email')
+            phone = form.cleaned_data.get('phone')
+            address = form.cleaned_data.get('address')
+            prefName = form.cleaned_data.get('prefName')
+            updateUserInfo(daUser, fname, lname, prefName, email, phone, address)
+            if accType == 'd':
+                return redirect('//54.88.218.67/home/all_drivers/viewProfile/?uname='+daUser+'')
+            elif accType == 's':
+                return redirect('//54.88.218.67/home/all_sponsors/viewProfile/?uname='+daUser+'')
+            else:
+                return redirect('//54.88.218.67/home/all_admins/viewProfile/?uname='+daUser+'')
+    else:
+        daUser = request.GET['uname']
+        #user = User.objects.get(username=daUser)
+        accType = verifyAccount(daUser)
+        infoList = getUserInfo(daUser, accType)
+        if accType == 'd':
+            initial_dict = {
+                "fname": infoList[0].fname,
+                "lname": infoList[0].lname,
+                "email": infoList[0].email,
+                "phone": infoList[0].phone,
+                "address": infoList[0].address,
+                "prefName": infoList[0].pname,
+            }
+        else:
+            initial_dict = {
+                "fname": infoList[0].fname2,
+                "lname": infoList[0].lname2,
+                "email": infoList[0].email2,
+                "phone": infoList[0].phone2,
+                "address": infoList[0].address2,
+                "prefName": infoList[0].pname2,
+            }
+        form = UpdateForm(initial=initial_dict)
+    return render(request, 'profile/update.html', {'form':form})
+
+def updateNotMyPass(request):
+    if request.method == "POST":
+        daUser = request.GET['uname']
+        user = User.object.get(username=daUser)
+        accType = verifyAccount(daUser)
+        form = UpdatePass(user, request.POST)
+        if form.is_valid():
+            form.save()
+            if accType == 'd':                                                                     return redirect('//54.88.218.67/home/all_drivers/viewProfile/?uname='+daUser+'')
+            elif accType == 's':
+                return redirect('//54.88.218.67/home/all_sponsors/viewProfile/?uname='+daUser+'')
+            else:
+                return redirect('//54.88.218.67/home/all_admins/viewProfile/?uname='+daUser+'')
+    else:
+        daUser = request.GET['uname']
+        user = User.objects.get(username=daUser)
+        accType = verifyAccount(daUser)
+        form = UpdatePass(user)
+    return render(request, 'profile/update.html', {'form':form})
+
+
+
+
+
 
 

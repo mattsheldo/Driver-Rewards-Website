@@ -1,0 +1,17 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  <h1><u>My Companies</u></h1>
+  <form method="POST" action"home/companies/">
+  	{% csrf_token %}
+	<div>
+		<h2>Join a Company</h2>
+		<label>Join Code: &nbsp;</label>
+		<input type="number" name="compCode">
+		<input type="submit" value="Apply" name="apply">
+	</div>
+  </form>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/companies/">My Companies</a>
+{% endblock extraButtons %}

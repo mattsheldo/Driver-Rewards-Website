@@ -8,6 +8,8 @@
 	<p>Email Address: {{ driverObj.email }}</p>
 	<p>Phone Number: {{ driverObj.phone }}</p>
 	<p>Address: {{ driverObj.address }}</p>
+	<a href="//54.88.218.67/home/all_drivers/viewProfile/edit/?uname={{ driverObj.user }}">Click Here to Edit Driver's Personal Info</a> <br>
+	<a href="54.88.218.67/home/all_drivers/viewProfile/edit/pass/?uname={{ driverObj.user }}">Click Here to Change Driver's Password</a>
 {% endblock content %}
 
 {% block sidebar %}
@@ -19,5 +21,5 @@
 
 {% block extraButtons %}
         <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
-        <a class="nav-item nav-link" href="/home/point_value/">Point Value</a>
+        <a class="nav-item nav-link" href="/home/point_value/">My Company</a>
 {% endblock extraButtons %}

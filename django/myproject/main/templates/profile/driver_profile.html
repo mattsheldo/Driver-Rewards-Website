@@ -1,13 +1,15 @@
 {% extends "driverRewards/basic.html"%}
 {% block content %}
 	<h1>{{ driverObj.first }} {{ driverObj.last }}'s Points:</h1>
+	<p>Username: {{driverObj.user}}</p>
 	<p>First Name: {{infoList.0.fname}}</p>
 	<p>Last Name: {{infoList.0.lname}}</p>
 	<p>Preferred Name: {{infoList.0.pname}}</p>
 	<p>Email Address: {{infoList.0.email}}</p>
 	<p>Phone Number: {{infoList.0.phone}}</p>
 	<p>Address: {{infoList.0.address}}</p>
-	<a href="http://54.88.218.67/home/profile/update/">Click to edit</a>
+	<a href="http://54.88.218.67/home/profile/update/">Click Here to Edit Personal Info</a> <br>
+	<a href="http://54.88.218.67/home/profile/update/pass/">Click Here to Change Password</a>
 {% endblock content %}
 
 {% block sidebar %}
@@ -16,3 +18,7 @@
                 <p>{{ entry.employerName }}: {{ entry.pointTotal }}</p>
         {% endfor %}
 {% endblock sidebar%}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/companies/">My Companies</a>
+{% endblock extraButtons %}

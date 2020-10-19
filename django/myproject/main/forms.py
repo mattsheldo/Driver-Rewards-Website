@@ -23,7 +23,13 @@ class UserForm(UserCreationForm):
 
 
 
-class UpdateForm(PasswordChangeForm):
+class UpdatePass(PasswordChangeForm):
+    class Meta:
+        fields = {'old_password','new_password1','new_password2',}
+
+
+
+class UpdateForm(forms.Form):
     fname = forms.CharField(label='First Name', max_length=128)
     lname = forms.CharField(label='Last Name', max_length=128)
     prefName = forms.CharField(label='Preferred Name', max_length=128)
@@ -32,7 +38,7 @@ class UpdateForm(PasswordChangeForm):
     address = forms.CharField(label='Address', max_length=128)
 
     class Meta:
-        fields = {'old_password','new_password1','new_password2','fname','lname','prefName','email','phone','address',}
+        fields = {'fname','lname','prefName','email','phone','address',}
 
 
 

@@ -31,7 +31,63 @@ def pullDriverProfile(username):
         )
         # Look for all info for this driver
         myCursor = mydb.cursor()
-        query = "SELECT auth_user.username, first_name, last_name, Point_Total, Employer_ID, preferred_name, email, phone, address_, Name_ FROM (auth_user JOIN Driver_Points ON Driver_Points.Driver_User = auth_user.username) JOIN Employers ON Employer_ID = Employers.ID WHERE auth_user.username = '" + username + "';"
+        query = "SELECT auth_user.username, first_name, last_name, Point_Total, Employer_ID, preferred_name, email, phone, address_, Name_, Approved FROM (auth_user JOIN Driver_Points ON Driver_Points.Driver_User = auth_user.username) JOIN Employers ON Employer_ID = Employers.ID WHERE auth_user.username = '" + username + "';"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Put query results into the profile object
+            pointList = []
+            pref = ""
+            for d in myResults:
+                if d[10] == True:
+                    pointList.append(DriverPoints(d[3], d[4], d[9]))
+                if d[5]:
+                    pref = d[5]
+                profileObj = DriverProfile(d[0], d[1], d[2], pointList, pref, d[6], d[7], d[8])
+        except Exception as e:
+            print("pullDriverProfile(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pullDriverProfile(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return profileObj
+
+def spPullDriverProfile(username, sponsor):
+    profileObj = DriverProfile("", "", "", [], "", "", "", "")
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for the employer that this sponsor works for
+        myID = -1
+        myCursor = mydb.cursor()
+        query = "SELECT Employer_ID FROM Sponsors WHERE Username = '" + sponsor + "';"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            # Store the employer id
+            for i in myResults:
+                myID = i[0]
+        except Exception as e:
+            print("spPullDriverProfile(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Look for all info for this driver
+        myCursor = mydb.cursor()
+        query = "SELECT auth_user.username, first_name, last_name, Point_Total, Employer_ID, preferred_name, email, phone, address_, Name_ FROM (auth_user JOIN Driver_Points ON Driver_Points.Driver_User = auth_user.username) JOIN Employers ON Employer_ID = Employers.ID WHERE auth_user.username = '" + username + "' AND Employer_ID = " + str(myID) + ";"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -44,13 +100,13 @@ def pullDriverProfile(username):
                 pointList.append(DriverPoints(d[3], d[4], d[9]))
                 if d[5]:
                     pref = d[5]
-                profileObj = DriverProfile(d[0], d[1], d[2], pointList, pref, d[6], d[7], d[8])
+            profileObj = DriverProfile(d[0], d[1], d[2], pointList, pref, d[6], d[7], d[8])
         except Exception as e:
-            print("pullDriverProfile(): Failed to query database: " + str(e))
+            print("spPullDriverProfile(): Failed to query database: " + str(e))
         finally:
             myCursor.close()
     except Exception as e:
-        print("pullDriverProfile(): Failed to connect: " + str(e))
+        print("spPullDriverProfile(): Failed to connect: " + str(e))
     finally:
         mydb.close()
         return profileObj

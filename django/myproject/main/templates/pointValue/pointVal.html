@@ -1,19 +1,32 @@
 {% extends "driverRewards/basic.html" %}
 {% block content %}
-  <h1>Point Value</h1>
-  <form method="POST" action"home/point_value/">
+  <h1>{{ companyProf.name }}</h1>
+  <p>Point Ratio: {{ companyProf.pointRatio }} Points/USD</p>
+  <form method="POST" action"/home/point_value/">
      {% csrf_token %}
-     <p>Current Value:</p>
-     <p>${{dollarValue}} Dollars per 1 Point</p>
-        <input type="number" name="pointVal" id="pointValID">
+        <input type="number" step="0.01" name="pointVal" id="pointValID">
         <input type="submit" value="Submit" id="DollarValue" name="Dollars">
-       <!-- <input type="submit" value="Remove" id="removeButID" name="removeBut">
-        <input type="hidden" id="userid" name="username" value="{{ driver.user }}">
-	<input type="hidden" id="pointid" name="point" value="{{ driver.pointTotal }}"> -->
   </form>
+  <br>
+  <h4>Pending Employee Applications</h4>
+  <div>
+  {% for driver in driverList %}
+	  <form method="POST" action="/home/point_value/">
+		{% csrf_token %}
+		<label>{{ driver.last }}, {{ driver.first }}: &nbsp;</label>
+		<input type="submit" value="Accept" name="accept">
+		<input type="submit" value="Reject" name="reject">
+		<input type="hidden" value="{{ driver.user }}" name="dUser">
+	  </form>
+  {% endfor %}
+  </div>
 {% endblock content %}
+
+{% block sidebar %}
+        <p>Join Code: <strong>{{ companyProf.code }}</strong></p>
+{% endblock sidebar%}
 
 {% block extraButtons %}
         <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
-        <a class="nav-item nav-link" href="/home/point_value/">Point Value</a>
+        <a class="nav-item nav-link" href="/home/point_value/">My Company</a>
 {% endblock extraButtons %}
