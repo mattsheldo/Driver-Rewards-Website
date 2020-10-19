@@ -88,6 +88,12 @@ def joinCompany(sponsor, code):
             myCursor.execute(query)
             myResults = myCursor.fetchall()
 
+            # If no match found, just return
+            if len(myResults) == 0:
+                myCursor.close()
+                mydb.close()
+                return
+
             for i in myResults:
                 myID = i[0]
         except Exception as e:

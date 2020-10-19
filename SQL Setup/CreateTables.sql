@@ -92,6 +92,7 @@ CREATE TABLE Driver_Points(
   Driver_User VARCHAR(150) NOT NULL,
   Employer_ID INT NOT NULL,
   Point_Total INT NOT NULL,
+  Approved BOOLEAN NOT NULL,
   CONSTRAINT DPPk PRIMARY KEY(Driver_User, Employer_ID),
   CONSTRAINT DPDrFK FOREIGN KEY(Driver_User) REFERENCES Drivers(Username),
   CONSTRAINT DPEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
