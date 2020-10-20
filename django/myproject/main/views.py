@@ -6,7 +6,7 @@ from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pull
 from viewsFunctions.SponsorList import SponsorListItem, pulldownAdmins, pulldownSponsors
 from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile
 from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers
-from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile
+from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints
 from viewsFunctions.NewUserReg import addUserInfo, addUserTypeInfo
 from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
@@ -46,12 +46,10 @@ def home(request):
     loginUsername = request.user.username
     accType = verifyAccount(loginUsername)
     infoList = getUserInfo(loginUsername, accType)
-    driverObj = pullDriverProfile(loginUsername)
     if accType == "d":
+        driverObj = pullDriverProfile(loginUsername)
         return render(request, 'homepage/homepage.html', {'driverObj':driverObj})
     elif accType == "s":
-        if request.method == "POST":
-            print("create company")
         return render(request, 'homepage/sponsor_homepage.html')
     elif accType == "a":
         return render(request, 'homepage/admin_homepage.html')
@@ -176,7 +174,14 @@ def viewMyCompanies(request):
         driverUser = request.user.username
         code = request.POST.get("compCode")
         applyToCompany(driverUser, code)
-    return render(request, 'pointValue/viewComps.html')
+    driverObj = pullDriverProfile(request.user.username)
+    return render(request, 'pointValue/viewComps.html', {'driverObj':driverObj})
+
+def viewACompany(request):
+    empID = request.GET["comp"]
+    companyProf = drPullCompanyProfile(empID)
+    dPoints = getPoints(request.user.username, empID)
+    return render(request, 'pointValue/compProfile.html', {'companyProf':companyProf, 'dPoints':dPoints})
 
 def updateMyPersonalInfo(request):
     if request.method == 'POST':

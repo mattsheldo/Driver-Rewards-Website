@@ -1,0 +1,14 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  <h1>{{ companyProf.name }}</h1>
+  <p>Point Ratio: {{ companyProf.pointRatio }} Points/USD</p>
+  <p>My Points: {{ dPoints }}</p>
+{% endblock content %}
+
+{% block sidebar %}
+        <p>Join Code: <strong>{{ companyProf.code }}</strong></p>
+{% endblock sidebar%}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/companies/">My Companies</a>
+{% endblock extraButtons %}
