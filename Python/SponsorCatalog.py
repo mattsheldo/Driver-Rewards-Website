@@ -2,10 +2,11 @@ from ebaysdk.finding import Connection as Finding
 from ebaysdk.exception import ConnectionError
 
 class CatalogItem:
-    def __init__(self, itemID, name, price):
+    def __init__(self, itemID, name, price, shipping):
         self.itemID = itemID
         self.name = name
         self.price = price
+        self.shipping = shipping
 
 def searchGeneralAPI(keyword):
     data = {}
@@ -21,6 +22,9 @@ def searchGeneralAPI(keyword):
             }, {
                 'name': 'Currency',     # Only deal with American dollars
                 'value': 'USD'
+            }, {
+                'name': 'ListingType',     # Don't deal with any auctions
+                'value': 'FixedPrice'
             }]
         }
         response = api.execute('findItemsAdvanced', body)

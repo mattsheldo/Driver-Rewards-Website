@@ -10,15 +10,18 @@ from ebaysdk.exception import ConnectionError
 try:
     api = Finding(config_file='ebay.yaml')
     body = {
-            'keywords': 'Clemson',
-            'itemFilter': [{
-                'name': 'Condition',     # Only search for new items
-                'value': 'New'
-            }, {
-                'name': 'Currency',     # Only deal with American dollars
-                'value': 'USD'
-            }]
-        }
+        'keywords': 'Clemson',
+        'itemFilter': [{
+            'name': 'Condition',     # Only search for new items
+            'value': 'New'
+        }, {
+            'name': 'Currency',     # Only deal with American dollars
+            'value': 'USD'
+        }, {
+            'name': 'ListingType',     # Don't deal with any auctions
+            'value': 'FixedPrice'
+        }]
+    }
     response = api.execute('findItemsAdvanced', body)
     data = response.dict()
     print(data)
