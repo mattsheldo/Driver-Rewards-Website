@@ -23,7 +23,8 @@ try:
                 'title': 'New York NY Giants LED Light Lamp Collectible Eli Manning Home Decor Gift',
                 'gloablId': 'EBAY-US',
                 'primaryCategory': {
-
+                    'categoryId': '206',
+                    'categoryName': 'Football-NFL'
                 },
                 'galleryURL': 'https://thumbs4.ebaystatic.com/m/mb1wCBseaZ1QIuk8tfug9Og/140.jpg',
                 'viewItemURL': 'https://www.ebay.com/itm/New-York-NY-Giants-LED-Light-Lamp-Collectible-Eli-Manning-Home-Decor-Gift-/283574788723',
