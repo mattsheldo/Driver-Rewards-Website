@@ -38,7 +38,8 @@ def searchGeneralAPI(keyword):
         itemID = item['itemId']
         itemName = item['title']
         itemPrice = item['sellingStatus']['currentPrice']['value']
-        foundItems.append(CatalogItem(itemID, itemName, itemPrice))
+        itemShipping = item['shippingInfo']['shippingSerivceCost']['value']
+        foundItems.append(CatalogItem(itemID, itemName, itemPrice, itemShipping))
 
         if len(foundItems) >= 10:
             return foundItems
