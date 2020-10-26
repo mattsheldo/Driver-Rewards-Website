@@ -9,7 +9,10 @@ from ebaysdk.exception import ConnectionError
 
 try:
     api = Finding(config_file='ebay.yaml')
-    response = api.execute('findItemsAdvanced', {'keywords': 'NY Giants'})
+    body = {
+        'keywords': '283574788723'
+    }
+    response = api.execute('findItemsAdvanced', body)
     data = response.dict()
     print(data)
     '''
