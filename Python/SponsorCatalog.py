@@ -35,6 +35,8 @@ def searchGeneralAPI(keyword):
         return foundItems
     
     data = response.dict()
+    if not 'searchResult' in data.keys():
+        return foundItems
     for item in data['searchResult']['item']:
         itemID = item['itemId']
         itemName = item['title']
