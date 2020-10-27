@@ -1,0 +1,23 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	<h1>{{ compProf.name }} Catalog</h1>
+	<div>Powered by eBay</div>
+	<br>
+	{% for item in itemList %}
+	<div>
+		<strong>{{ item.name }}</strong>
+		<br>
+		{{ item.points }} points
+	</div>
+	<br>
+	{% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+	<p>My Points: <strong>{{ drivPoints }}</strong></p>
+{% endblock sidebar %}
+
+{% block extraButtons %}
+	<a class="nav-item nav-link" href="/home/companies/">Companies</a>
+	<a class="nav-item nav-link" href="/home/catalogs/">Catalogs</a>
+{% endblock extraButtons %}

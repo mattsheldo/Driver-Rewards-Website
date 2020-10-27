@@ -5,7 +5,8 @@
   <p>List of all admins</p>
   <div id="dList">
   {% for admin in adminList %}
-  	<a href="//54.88.218.67/home/all_admins/viewProfile/?uname={{ admin.user }}" style="color: black; text-decoration: none;">{{ admin.last }}, {{ admin.first }}</a>
+  	<a href="//54.88.218.67/home/all_admins/viewProfile/?uname={{ admin.user }}" style="color: black;">{{ admin.last }}, {{ admin.first }}</a>
+	<br>
   {% endfor %}
   </div>
   

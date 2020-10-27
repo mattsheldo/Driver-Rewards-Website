@@ -5,7 +5,7 @@
   <p>List of all drivers</p>
   <div id="dList">
   {% for driver in driverList %}
-  	<strong><a href="//54.88.218.67/home/all_drivers/viewProfile/?uname={{ driver.user }}" style="color: black; text-decoration: none;">{{ driver.last }}, {{ driver.first }}</a></strong>
+  	<strong><a href="//54.88.218.67/home/all_drivers/viewProfile/?uname={{ driver.user }}" style="color: black;">{{ driver.last }}, {{ driver.first }}</a></strong>
 	{% for obj in driver.pointsObj %}
 		<form method="POST", action="/home/all_drivers/">
                 	{% csrf_token %}
@@ -19,6 +19,7 @@
 			<input type="hidden" id="empID" name="emp" value="{{ obj.employer }}">
         	</form>
 	{% endfor %}
+	<br>
   {% endfor %}
   </div>
   

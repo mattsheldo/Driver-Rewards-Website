@@ -113,7 +113,8 @@ def adminPulldownDrivers():
                     employers = []
 
                 # Get current info
-                employers.append(DriverPoints(d[2], d[4], d[5]))
+                if d[4] > -1:
+                    employers.append(DriverPoints(d[2], d[4], d[5]))
                 item = DriverListItem(d[0], d[1], 0, d[3], employers)
         except Exception as e:
             print("pulldownDrivers(): Failed to query database: " + str(e))

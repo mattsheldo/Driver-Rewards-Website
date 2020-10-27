@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/create/', views.createAcc, name='createAcc-home2'),
     path('logout/', auth_views.LogoutView.as_view(template_name='logout/logout.html'), name='logout'),
     path('home/', views.home, name='home-home'),
+    path('home/newuser/', views.adminCreate, name="admin-create"),
     path('home/logout/', auth_views.LogoutView.as_view(template_name='logout/logout.html'), name='logout2'),
     path('home/drivers/', views.viewMyDrivers, name="driverlist-driverlist"),
     path('home/all_drivers/', views.viewAllDrivers, name="all-drivers-list"),
@@ -29,5 +30,8 @@ urlpatterns = [
     path('home/all_admins/viewProfile/', views.adviewAdminProfile, name="ad-view-admin"),
     path('home/all_admins/viewProfile/edit/', views.updateNotMyPersonalInfo, name="profile-admin"),
     path('home/all_admins/viewProfile/edit/pass/', views.updateNotMyPass, name="profile-adminp"),
+    path('home/catalog/', views.seeMyCatalog, name="sponsor-catalog"),
+    path('home/catalogs/', views.seeMyCatalogs, name="driver-catalogs"),
+    path('home/catalogs/view/', views.seeThisCatalog, name="driver-see-catalog"),
     path('', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
 ]

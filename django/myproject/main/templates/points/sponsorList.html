@@ -5,7 +5,8 @@
   <p>List of all sponsors</p>
   <div id="dList">
   {% for sponsor in sponsorList %}
-  	<a href="//54.88.218.67/home/all_sponsors/viewProfile/?uname={{ sponsor.user }}" style="color: black; text-decoration: none;">{{ sponsor.last }}, {{ sponsor.first }}</a>
+  	<a href="//54.88.218.67/home/all_sponsors/viewProfile/?uname={{ sponsor.user }}" style="color: black;">{{ sponsor.last }}, {{ sponsor.first }}</a>
+	<br>	
   {% endfor %}
   </div>
   

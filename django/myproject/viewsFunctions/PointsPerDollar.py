@@ -1,13 +1,14 @@
 import mysql.connector
 
 class CompanyProfile:
-    def __init__(self, name, pointRatio, code):
+    def __init__(self, cid, name, pointRatio, code):
+        self.cid = cid
         self.name = name
         self.pointRatio = pointRatio
         self.code = code
 
 def pullCompanyProfile(sponsor):
-    profileObj = CompanyProfile("", 0.0, 0)
+    profileObj = CompanyProfile(0, "", 0.0, 0)
 
     # Open connection
     try:
@@ -20,7 +21,7 @@ def pullCompanyProfile(sponsor):
 
         # Look for all info for this driver
         myCursor = mydb.cursor()
-        query = "SELECT Name_, PointsPerDollar, Join_Code FROM Employers JOIN Sponsors ON Employer_ID = ID WHERE Username = '" + sponsor + "';"
+        query = "SELECT ID, Name_, PointsPerDollar, Join_Code FROM Employers JOIN Sponsors ON Employer_ID = ID WHERE Username = '" + sponsor + "';"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -28,7 +29,7 @@ def pullCompanyProfile(sponsor):
 
             # Put query results into the profile object
             for c in myResults:
-                profileObj = CompanyProfile(c[0], c[1], c[2])
+                profileObj = CompanyProfile(c[0], c[1], c[2], c[3])
         except Exception as e:
             print("pullCompanyProfile(): Failed to query database: " + str(e))
         finally:
@@ -40,7 +41,7 @@ def pullCompanyProfile(sponsor):
         return profileObj
 
 def drPullCompanyProfile(emp):
-    profileObj = CompanyProfile("", 0.0, 0)
+    profileObj = CompanyProfile(0, "", 0.0, 0)
 
     # Open connection
     try:
@@ -53,7 +54,7 @@ def drPullCompanyProfile(emp):
 
         # Look for all info for this driver
         myCursor = mydb.cursor()
-        query = "SELECT Name_, PointsPerDollar, Join_Code FROM Employers WHERE ID = " + str(emp) + ";"
+        query = "SELECT ID, Name_, PointsPerDollar, Join_Code FROM Employers WHERE ID = " + str(emp) + ";"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -61,7 +62,7 @@ def drPullCompanyProfile(emp):
 
             # Put query results into the profile object
             for c in myResults:
-                profileObj = CompanyProfile(c[0], c[1], c[2])
+                profileObj = CompanyProfile(c[0], c[1], c[2], c[3])
         except Exception as e:
             print("drPullCompanyProfile(): Failed to query database: " + str(e))
         finally:

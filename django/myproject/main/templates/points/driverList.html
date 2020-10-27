@@ -5,7 +5,7 @@
   <p>List of each driver in the company with their current point total</p>
   <div id="dList">
   {% for driver in driverList %}
-  	<a href="//54.88.218.67/home/drivers/viewProfile/?uname={{ driver.user }}" style="color: black; text-decoration: none;">{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }} points</a>
+  	<a href="//54.88.218.67/home/drivers/viewProfile/?uname={{ driver.user }}" style="color: black;">{{ driver.last }}, {{ driver.first }}: {{ driver.pointTotal }} points</a>
 	<form method="POST", action="/home/drivers/">
 		{% csrf_token %}
 		<input type="number" name="pointInput" id="pointInputID">
@@ -23,4 +23,5 @@
 {% block extraButtons %}
         <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
 	<a class="nav-item nav-link" href="/home/point_value/">My Company</a>
+	<a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
 {% endblock extraButtons %}

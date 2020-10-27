@@ -12,6 +12,7 @@ from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
 from viewsFunctions.FindCompany import applyToCompany
 from viewsFunctions.ApproveDriver import approveDriver
+from SponsorCatalog import searchGeneralAPI
 from .forms import UserForm, UpdateForm, UpdatePass
 from django.contrib.auth.models import User
 
@@ -310,8 +311,47 @@ def updateNotMyPass(request):
     return render(request, 'profile/update.html', {'form':form})
 
 
+def adminCreate(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST)
+        if user_form.is_valid():
+            user_form.save()
 
+            #Fill in additional information in user database
+            uname = user_form.cleaned_data.get('username')
+            phone = user_form.cleaned_data.get('phone')
+            address = user_form.cleaned_data.get('address')
+            prefName = user_form.cleaned_data.get('prefName')
+            addUserInfo(uname, prefName, phone, address)
 
+            #Add user to their specific user type table
+            userType = user_form.cleaned_data.get('type_of_user_choices')
+            userType = dict(user_form.fields['type_of_user_choices'].choices)[userType]
+            addUserTypeInfo(uname, userType)
+            return redirect('//54.88.218.67/home/')
+    else:
+        user_form = UserForm()
+    return render(request, 'createAcc/adregister.html', {'user_form':user_form})
 
+def seeMyCatalog(request):
+    itemList = searchGeneralAPI('Clemson')
+    comp = pullCompanyProfile(request.user.username)
+    pointRatio = float(comp.pointRatio)
+    compName = comp.name
+    for item in itemList:
+        item.points = round(item.price * pointRatio + item.shipping * pointRatio)
+    return render(request, 'catalog/sponsorCatalog.html', {'itemList':itemList, 'compName':compName})
 
+def seeMyCatalogs(request):
+    driverObj = pullDriverProfile(request.user.username)
+    return render(request, 'catalog/myCatalogs.html', {'comps':driverObj.pointObjs})
 
+def seeThisCatalog(request):
+    comp = request.GET['comp']
+    itemList = searchGeneralAPI('Clemson')
+    compProfile = drPullCompanyProfile(comp)
+    pointRatio = float(compProfile.pointRatio)
+    drivPoints = getPoints(request.user.username, compProfile.cid)
+    for item in itemList:
+        item.points = round(item.price * pointRatio + item.shipping * pointRatio)
+    return render(request, 'catalog/driverCatalog.html', {'itemList':itemList, 'compProf':compProfile, 'drivPoints':drivPoints})
