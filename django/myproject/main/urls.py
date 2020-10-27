@@ -33,5 +33,7 @@ urlpatterns = [
     path('home/catalog/', views.seeMyCatalog, name="sponsor-catalog"),
     path('home/catalogs/', views.seeMyCatalogs, name="driver-catalogs"),
     path('home/catalogs/view/', views.seeThisCatalog, name="driver-see-catalog"),
+    path('home/admin_catalogs/', views.adminCatalogs, name="admin-catalogs"),
+    path('home/admin_catalogs/view/', views.adminViewCatalog, name="admin-catalog"),
     path('', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
 ]

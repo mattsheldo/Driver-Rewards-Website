@@ -6,7 +6,7 @@ from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pull
 from viewsFunctions.SponsorList import SponsorListItem, pulldownAdmins, pulldownSponsors
 from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile
 from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers
-from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints
+from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints, pullAllCompanies
 from viewsFunctions.NewUserReg import addUserInfo, addUserTypeInfo
 from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
@@ -334,10 +334,11 @@ def adminCreate(request):
     return render(request, 'createAcc/adregister.html', {'user_form':user_form})
 
 def seeMyCatalog(request):
-    itemList = searchGeneralAPI('Clemson')
     comp = pullCompanyProfile(request.user.username)
     pointRatio = float(comp.pointRatio)
     compName = comp.name
+
+    itemList = searchGeneralAPI(comp.query)
     for item in itemList:
         item.points = round(item.price * pointRatio + item.shipping * pointRatio)
     return render(request, 'catalog/sponsorCatalog.html', {'itemList':itemList, 'compName':compName})
@@ -348,10 +349,25 @@ def seeMyCatalogs(request):
 
 def seeThisCatalog(request):
     comp = request.GET['comp']
-    itemList = searchGeneralAPI('Clemson')
     compProfile = drPullCompanyProfile(comp)
     pointRatio = float(compProfile.pointRatio)
     drivPoints = getPoints(request.user.username, compProfile.cid)
+
+    itemList = searchGeneralAPI(compProfile.query)
     for item in itemList:
         item.points = round(item.price * pointRatio + item.shipping * pointRatio)
     return render(request, 'catalog/driverCatalog.html', {'itemList':itemList, 'compProf':compProfile, 'drivPoints':drivPoints})
+
+def adminCatalogs(request):
+    compList = pullAllCompanies()
+    return render(request, 'catalog/allCatalogs.html', {'compList':compList})
+
+def adminViewCatalog(request):
+    comp = request.GET['comp']
+    compProf = drPullCompanyProfile(comp)
+    pointRatio = float(compProf.pointRatio)
+    
+    itemList = searchGeneralAPI(compProf.query)
+    for item in itemList:
+        item.points = round(item.price * pointRatio + item.shipping * pointRatio)
+    return render(request, 'catalog/adminCatalog.html', {'itemList':itemList, 'comp':compProf})

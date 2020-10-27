@@ -45,7 +45,7 @@ def createCompany(sponsor, name):
 
         # Create the Employer
         myCursor = mydb.cursor()
-        query = "INSERT INTO Employers VALUES (" + str(myID) + ", '" + name + "', 100, " + str(code) + ");"
+        query = "INSERT INTO Employers VALUES (" + str(myID) + ", '" + name + "', 100, " + str(code) + ", 'gift card');"
         try:
             # Execute query and get results
             myCursor.execute(query)

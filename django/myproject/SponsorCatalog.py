@@ -35,11 +35,16 @@ def searchGeneralAPI(keyword):
         return foundItems
     
     data = response.dict()
+    if 'searchResult' not in data.keys() or not data['searchResult']:
+        return foundItems
     for item in data['searchResult']['item']:
         itemID = item['itemId']
         itemName = item['title']
         itemPrice = item['sellingStatus']['currentPrice']['value']
-        itemShipping = item['shippingInfo']['shippingServiceCost']['value']
+        if 'shippingServiceCost' in item['shippingInfo'].keys() and item['shippingInfo']['shippingServiceCost']:
+            itemShipping = item['shippingInfo']['shippingServiceCost']['value']
+        else:
+            itemShipping = 0.0
         foundItems.append(CatalogItem(int(itemID), itemName, float(itemPrice), float(itemShipping), 0.0))
 
         if len(foundItems) >= 10:
