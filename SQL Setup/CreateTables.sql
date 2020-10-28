@@ -62,7 +62,7 @@ CREATE TABLE Shopping_Cart_Items(
   Point_Cost INT NOT NULL,
   Sponsor_ID VARCHAR(150),
   Admin_Id VARCHAR(150),
-  Product_ID INT NOT NULL,
+  Product_ID BIGINT NOT NULL,
   Product_Name VARCHAR(150) NOT NULL,
   CONSTRAINT CrtPK PRIMARY KEY(ID),
   CONSTRAINT CrtAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
@@ -82,7 +82,7 @@ CREATE TABLE Purchase_History(
   Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase
   Sponsor_ID VARCHAR(150),
   Admin_Id VARCHAR(150),
-  Product_ID INT NOT NULL,
+  Product_ID BIGINT NOT NULL,
   CONSTRAINT PchPK PRIMARY KEY(ID),
   CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
   CONSTRAINT PchSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
