@@ -36,7 +36,7 @@ def addToCart(driver, empID, points, itemID, itemName):
             myCursor.close()
 
         # Make sure to protect against any apostraphes in the item name
-        sqlItemName = mydb.escape_string(itemName)
+        sqlItemName = itemName.replace("'", "''")
 
         # Insert item into the appropriate cart
         myCursor = mydb.cursor()
