@@ -1,5 +1,11 @@
 import mysql.connector
 
+class CartItem:
+    def __init__(self, pid, name, pointCost):
+        self.pid = pid
+        self.name = name
+        self.pointCost = pointCost
+
 def addToCart(driver, empID, points, itemID, itemName):
     # Open connection
     try:
@@ -46,3 +52,34 @@ def addToCart(driver, empID, points, itemID, itemName):
         print("addToCart(): Failed to connect: " + str(e))
     finally:
         mydb.close()
+
+def pulldownCart(driver, empID):
+    cartItems = []
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Find all items linked to this driver and employer
+        myCursor = mydb.cursor()
+        query = "SELECT Product_ID, Product_Name, Point_Cost FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " ORDER BY Product_Name;"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for item in myResults:
+                cartItems.append(CartItem(item[0], item[1], item[2]))
+        except Exception as e:
+            print("pulldownCart(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("pulldownCart(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return cartItems
