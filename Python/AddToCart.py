@@ -29,9 +29,12 @@ def addToCart(driver, empID, points, itemID, itemName):
         finally:
             myCursor.close()
 
+        # Make sure to protect against any apostraphes in the item name
+        sqlItemName = mydb.escape_string(itemName)
+
         # Insert item into the appropriate cart
         myCursor = mydb.cursor()
-        query = "INSERT INTO Shopping_Cart_Items (ID, Username, Employer_ID, Point_Cost, Product_ID, Product_Name) VALUES (" + str(myID) + ", '" + driver + "', " + str(empID) + ", " + str(points) + ", " + str(itemID) + ", '" + itemName + "');"
+        query = "INSERT INTO Shopping_Cart_Items (ID, Username, Employer_ID, Point_Cost, Product_ID, Product_Name) VALUES (" + str(myID) + ", '" + driver + "', " + str(empID) + ", " + str(points) + ", " + str(itemID) + ", '" + sqlItemName + "');"
         try:
             myCursor.execute(query)
             mydb.commit()
