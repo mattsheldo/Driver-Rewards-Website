@@ -12,6 +12,7 @@ from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
 from viewsFunctions.FindCompany import applyToCompany
 from viewsFunctions.ApproveDriver import approveDriver
+from viewsFunctions.AddToCart import addToCart, pulldownCart
 from SponsorCatalog import searchGeneralAPI
 from .forms import UserForm, UpdateForm, UpdatePass
 from django.contrib.auth.models import User
@@ -348,15 +349,28 @@ def seeMyCatalogs(request):
     return render(request, 'catalog/myCatalogs.html', {'comps':driverObj.pointObjs})
 
 def seeThisCatalog(request):
-    comp = request.GET['comp']
-    compProfile = drPullCompanyProfile(comp)
-    pointRatio = float(compProfile.pointRatio)
-    drivPoints = getPoints(request.user.username, compProfile.cid)
+    if request.method == "POST":
+        
+        driverUser = request.user.username
 
-    itemList = searchGeneralAPI(compProfile.query)
-    for item in itemList:
-        item.points = round(item.price * pointRatio + item.shipping * pointRatio)
-    return render(request, 'catalog/driverCatalog.html', {'itemList':itemList, 'compProf':compProfile, 'drivPoints':drivPoints})
+        compID = int(request.POST.get("company"))
+        pointCost = int(request.POST.get("pointCost"))
+        itemID = int(request.POST.get("itemID"))
+        itemName = request.POST.get("itemName")
+        
+        addToCart(driverUser, compID, pointCost, itemID, itemName)
+
+        return redirect('//54.88.218.67/home/cart_list/cart/?comp=' + str(compID))
+    else:
+        comp = request.GET['comp']
+        compProfile = drPullCompanyProfile(comp)
+        pointRatio = float(compProfile.pointRatio)
+        drivPoints = getPoints(request.user.username, compProfile.cid)
+
+        itemList = searchGeneralAPI(compProfile.query)
+        for item in itemList:
+            item.points = round(item.price * pointRatio + item.shipping * pointRatio)
+        return render(request, 'catalog/driverCatalog.html', {'itemList':itemList, 'compProf':compProfile, 'drivPoints':drivPoints})
 
 def adminCatalogs(request):
     compList = pullAllCompanies()
@@ -371,3 +385,17 @@ def adminViewCatalog(request):
     for item in itemList:
         item.points = round(item.price * pointRatio + item.shipping * pointRatio)
     return render(request, 'catalog/adminCatalog.html', {'itemList':itemList, 'comp':compProf})
+
+def seeMyCarts(request):
+    driverObj = pullDriverProfile(request.user.username)
+    return render(request, 'cart/myCartList.html', {'comps':driverObj.pointObjs})
+
+def seeThisCart(request):
+    driverUser = request.user.username
+    comp = request.GET['comp']
+    cartItems = pulldownCart(driverUser, comp)
+
+    compProf = drPullCompanyProfile(comp)
+    drivPoints = getPoints(request.user.username, compProf.cid)
+
+    return render(request, 'cart/viewMyCart.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints})

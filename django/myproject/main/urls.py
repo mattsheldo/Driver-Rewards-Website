@@ -35,5 +35,7 @@ urlpatterns = [
     path('home/catalogs/view/', views.seeThisCatalog, name="driver-see-catalog"),
     path('home/admin_catalogs/', views.adminCatalogs, name="admin-catalogs"),
     path('home/admin_catalogs/view/', views.adminViewCatalog, name="admin-catalog"),
+    path('home/cart_list/', views.seeMyCarts, name="driver-cart-list"),
+    path('home/cart_list/cart/', views.seeThisCart, name="view-cart"),
     path('', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
 ]
