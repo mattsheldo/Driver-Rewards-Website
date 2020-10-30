@@ -19,6 +19,9 @@ CREATE TABLE Invoices(
 
 CREATE TABLE Drivers(
   Username VARCHAR(150) NOT NULL,
+  Points_Alert BOOLEAN NOT NULL,
+  Order_Placed_Alert BOOLEAN NOT NULL,
+  Order_Issue_Alert BOOLEAN NOT NULL,
   CONSTRAINT DrPK PRIMARY KEY(Username),
   CONSTRAINT DrAccFK FOREIGN KEY(Username) REFERENCES auth_user(username)
 );
@@ -98,4 +101,13 @@ CREATE TABLE Driver_Points(
   CONSTRAINT DPPk PRIMARY KEY(Driver_User, Employer_ID),
   CONSTRAINT DPDrFK FOREIGN KEY(Driver_User) REFERENCES Drivers(Username),
   CONSTRAINT DPEmpFK FOREIGN KEY(Employer_ID) REFERENCES Employers(ID)
+);
+
+CREATE TABLE Driver_Alerts(
+	ID INT NOT NUll,
+  Username VARCHAR(150) NOT NULL,
+  Type_ CHAR(5) NOT NULL,     -- point, place, issue
+  Message_ VARCHAR(150) NOT NULL,
+  CONSTRAINT AlPk PRIMARY KEY(ID),
+  CONSTRAINT AlDrFk FOREIGN KEY(Username) REFERENCES Drivers(Username)
 );
