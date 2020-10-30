@@ -15,6 +15,7 @@ urlpatterns = [
     path('home/all_sponsors/', views.viewAllSponsors, name="all-sponsors-list"),
     path('home/all_admins/', views.viewAllAdmins, name="all-admins-list"),
     path('home/point_value/', views.UpdatePointVal, name="pointValue"),
+    #path('home/all_sponsors/points/',views.adminUpdatePointValue, name="points"),
     path('home/companies/', views.viewMyCompanies, name="view-my-comps"),
     path('home/companies/profile/', views.viewACompany, name="view-a-comp"),
     path('home/profile/', views.viewMyProfile, name="profile-profile"),

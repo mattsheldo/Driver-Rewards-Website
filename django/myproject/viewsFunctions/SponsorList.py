@@ -1,10 +1,11 @@
 import mysql.connector
 
 class SponsorListItem:
-    def __init__(self, first, last, user):
+    def __init__(self, first, last, user, pVal):
         self.first = first
         self.last = last
         self.user = user
+        self.pVal = pVal
 
 def pulldownAdmins():
     adminNames = []
@@ -18,7 +19,7 @@ def pulldownAdmins():
 	    database="DriverRewards"
 	)
 
-        # Look for all sponsors
+        # Look for all admins
         myCursor = mydb.cursor()
         query = "SELECT first_name, last_name, auth_user.username FROM auth_user JOIN Admins ON Admins.Username = auth_user.username;"
         try:
@@ -27,7 +28,7 @@ def pulldownAdmins():
             myResults = myCursor.fetchall()                                                                             
             # Put query results into a list
             for d in myResults:
-                adminNames.append(SponsorListItem(d[0], d[1], d[2]))
+                adminNames.append(SponsorListItem(d[0], d[1], d[2], d[3]))
         except Exception as e:
             print("pulldownAdmins(): Failed to query database: " + str(e))
         finally:
@@ -52,7 +53,7 @@ def pulldownSponsors():
 
         # Look for all sponsors
         myCursor = mydb.cursor()
-        query = "SELECT first_name, last_name, auth_user.username FROM auth_user JOIN Sponsors ON Sponsors.Username = auth_user.username;"
+        query = "SELECT first_name, last_name, auth_user.username, PointsPerDollar FROM (auth_user JOIN Sponsors ON Sponsors.Username = auth_user.username) JOIN Employers ON Employers.ID = Sponsors.Employer_ID;"
         try:
             # Execute query and get results
             myCursor.execute(query)
@@ -60,7 +61,7 @@ def pulldownSponsors():
 
             # Put query results into a list
             for d in myResults:
-                sponsorNames.append(SponsorListItem(d[0], d[1], d[2]))
+                sponsorNames.append(SponsorListItem(d[0], d[1], d[2], d[3]))
         except Exception as e:
             print("pulldownSponsors(): Failed to query database: " + str(e))
         finally:

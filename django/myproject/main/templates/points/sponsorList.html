@@ -5,7 +5,12 @@
   <p>List of all sponsors</p>
   <div id="dList">
   {% for sponsor in sponsorList %}
-  	<a href="//54.88.218.67/home/all_sponsors/viewProfile/?uname={{ sponsor.user }}" style="color: black;">{{ sponsor.last }}, {{ sponsor.first }}</a>
+  <a href="//54.88.218.67/home/all_sponsors/viewProfile/?uname={{ sponsor.user }}" style="color: black;">{{ sponsor.last }}, {{ sponsor.first }}, {{ sponsor.pVal }}</a>
+  <form method="POST" action"/home/all_sponsors/">
+	{% csrf_token %}
+	<input type="number" step="0.01" name="pointVal" id="pointValID">
+	<input type="submit" value="Submit" id="DollarValue" name="Dollars">
+  </form>
 	<br>	
   {% endfor %}
   </div>
