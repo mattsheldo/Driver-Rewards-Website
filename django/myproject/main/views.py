@@ -137,9 +137,9 @@ def adviewAdminProfile(request):
     return render(request, 'profile/admin_view_admin.html', {'adminObj':adminObj})
 
 def adminUpdatePointValue(request):
+    daUser = ""
     if request.method == "POST":
-        daUser = request.GET['uname']
-    #user = User.objects.get(username=daUser)
+        daUser = request.POST.get('uname')
     accType = verifyAccount(daUser)
     companyProf = pullCompanyProfile(daUser)
     if request.POST.get("pointVal"):

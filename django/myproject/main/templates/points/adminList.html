@@ -1,6 +1,5 @@
 {% extends "driverRewards/basic.html" %}
 {% block content %}
-  {% load static %}
   <h1>Admin List</h1>
   <p>List of all admins</p>
   <div id="dList">
@@ -9,8 +8,6 @@
 	<br>
   {% endfor %}
   </div>
-  
-  <script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
 {% endblock content %}
 
 {% block extraButtons %}

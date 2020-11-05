@@ -28,7 +28,7 @@ def pulldownAdmins():
             myResults = myCursor.fetchall()                                                                             
             # Put query results into a list
             for d in myResults:
-                adminNames.append(SponsorListItem(d[0], d[1], d[2], d[3]))
+                adminNames.append(SponsorListItem(d[0], d[1], d[2], 0))
         except Exception as e:
             print("pulldownAdmins(): Failed to query database: " + str(e))
         finally:

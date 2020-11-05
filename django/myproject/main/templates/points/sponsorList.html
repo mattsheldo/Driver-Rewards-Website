@@ -8,6 +8,7 @@
   <a href="//54.88.218.67/home/all_sponsors/viewProfile/?uname={{ sponsor.user }}" style="color: black;">{{ sponsor.last }}, {{ sponsor.first }}, {{ sponsor.pVal }}</a>
   <form method="POST" action"/home/all_sponsors/">
 	{% csrf_token %}
+	<input type="hidden" value="{{ sponsor.user }}" name="uname">
 	<input type="number" step="0.01" name="pointVal" id="pointValID">
 	<input type="submit" value="Submit" id="DollarValue" name="Dollars">
   </form>
