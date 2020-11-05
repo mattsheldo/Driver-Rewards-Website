@@ -109,6 +109,8 @@ def drPullCompanyProfile(emp):
         return profileObj
 
 def getPoints(driver, empID):
+    dPoints = 0
+
     # Open connection
     try:
         mydb = mysql.connector.connect(
@@ -127,7 +129,7 @@ def getPoints(driver, empID):
             myResults = myCursor.fetchall()
 
             for p in myResults:
-                return p[0]
+                dPoints = p[0]
         except Exception as e:
             print("getPoints(): Failed to query database: " + str(e))
         finally:
@@ -136,7 +138,7 @@ def getPoints(driver, empID):
         print("getPoints(): Failed to connect: " + str(e))
     finally:
         mydb.close()
-        return 0
+        return dPoints
 
 def UpdatePVal(sponsorID, DollarValue):
     mydb = mysql.connector.connect(host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",

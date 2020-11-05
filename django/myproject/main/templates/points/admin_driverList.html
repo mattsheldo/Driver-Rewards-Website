@@ -9,7 +9,7 @@
 	{% for obj in driver.pointsObj %}
 		<form method="POST", action="/home/all_drivers/">
                 	{% csrf_token %}
-			<label>{{ obj.employerName }}: {{ obj.pointTotal }} points</label>
+			<a href="//54.88.218.67/home/all_drivers/viewCart/?dUser={{ driver.user }}&comp={{ obj.employer }}" style="color: black;">{{ obj.employerName }}: {{ obj.pointTotal }} points</a>
 			<br>
                 	<input type="number" name="pointInput" id="pointInputID">
                 	<input type="submit" value="Add" id="addButID" name="addBut">

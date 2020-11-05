@@ -13,6 +13,7 @@
 		<input type="submit" value="Remove" id="removeButID" name="removeBut">
 		<input type="hidden" id="userid" name="username" value="{{ driver.user }}">
 		<input type="hidden" id="pointid" name="point" value="{{ driver.pointTotal }}">
+		<input type="button" onclick="location.href='//54.88.218.67/home/drivers/viewCart/?dUser={{ driver.user }}';" value="View Cart" />
 	</form>
   {% endfor %}
   </div>

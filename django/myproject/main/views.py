@@ -408,6 +408,25 @@ def seeThisCart(request):
     cartItems = pulldownCart(driverUser, comp)
 
     compProf = drPullCompanyProfile(comp)
-    drivPoints = getPoints(request.user.username, compProf.cid)
+    drivPoints = getPoints(driverUser, compProf.cid)
 
     return render(request, 'cart/viewMyCart.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints})
+
+def adminSeeCart(request):
+    driverUser = request.GET['dUser']
+    comp = request.GET['comp']
+    cartItems = pulldownCart(driverUser, comp)
+
+    compProf = drPullCompanyProfile(comp)
+    drivPoints = getPoints(driverUser, comp)
+
+    return render(request, 'cart/adminViewCart.html', {'itemList':cartItems, 'comp':compProf, 'dUser':driverUser, 'drivPoints':drivPoints})
+
+def sponsorSeeCart(request):
+    driverUser = request.GET['dUser']
+    compProf = pullCompanyProfile(request.user.username)
+    cartItems = pulldownCart(driverUser, compProf.cid)
+
+    drivPoints = getPoints(driverUser, compProf.cid)
+
+    return render(request, 'cart/sponsorViewCart.html', {'itemList':cartItems, 'comp':compProf, 'dUser':driverUser, 'drivPoints':drivPoints})
