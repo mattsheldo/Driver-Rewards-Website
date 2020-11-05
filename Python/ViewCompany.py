@@ -42,10 +42,6 @@ def pullAllCompanies():
         mydb.close()
         return companies
 
-result = pullAllCompanies()
-for r in result:
-    print(str(r.cid) + r.name + r.query)
-
 def pullCompanyProfile(sponsor):
     profileObj = CompanyProfile(0, "", 0.0, 0, "")
 
@@ -113,6 +109,8 @@ def drPullCompanyProfile(emp):
         return profileObj
 
 def getPoints(driver, empID):
+    dPoints = 0
+
     # Open connection
     try:
         mydb = mysql.connector.connect(
@@ -131,7 +129,7 @@ def getPoints(driver, empID):
             myResults = myCursor.fetchall()
 
             for p in myResults:
-                return p[0]
+                dPoints = p[0]
         except Exception as e:
             print("getPoints(): Failed to query database: " + str(e))
         finally:
@@ -140,4 +138,4 @@ def getPoints(driver, empID):
         print("getPoints(): Failed to connect: " + str(e))
     finally:
         mydb.close()
-        return 0
+        return dPoints
