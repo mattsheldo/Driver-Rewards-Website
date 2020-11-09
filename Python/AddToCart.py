@@ -83,3 +83,28 @@ def pulldownCart(driver, empID):
     finally:
         mydb.close()
         return cartItems
+
+def removeFromCart(driver, empID, itemID):
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Delete the item with the appropriate ID
+        myCursor = mydb.cursor()
+        query = "DELETE FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " AND Product_ID = " + str(itemID) + ";"
+        try:
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("removeFromCart(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("removeFromCart(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
