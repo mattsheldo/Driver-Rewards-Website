@@ -79,10 +79,9 @@ CREATE TABLE Purchase_History(
   ID INT NOT NULL,
   Username VARCHAR(150) NOT NULL,
   Employer_ID INT NOT NULL,
-  Date_ DATE NOT NULL,
+  Date_ DATETIME NOT NULL,
   Point_Total INT NOT NULL,
   Product_Name VARCHAR(150) NOT NULL,
-  Completed BOOLEAN NOT NULL,     -- False until 24 hours has passed from time of purchase
   Sponsor_ID VARCHAR(150),
   Admin_Id VARCHAR(150),
   Product_ID BIGINT NOT NULL,
