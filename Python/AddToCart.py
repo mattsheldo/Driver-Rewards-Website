@@ -2,10 +2,11 @@ import mysql.connector
 import time
 
 class CartItem:
-    def __init__(self, pid, name, pointCost):
+    def __init__(self, pid, name, pointCost, dbid):
         self.pid = pid
         self.name = name
         self.pointCost = pointCost
+        self.dbid = dbid
 
 def addToCart(driver, empID, points, itemID, itemName):
     # Open connection
@@ -68,13 +69,13 @@ def pulldownCart(driver, empID):
 
         # Find all items linked to this driver and employer
         myCursor = mydb.cursor()
-        query = "SELECT Product_ID, Product_Name, Point_Cost FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " ORDER BY Product_Name;"
+        query = "SELECT Product_ID, Product_Name, Point_Cost, ID FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " ORDER BY Product_Name;"
         try:
             myCursor.execute(query)
             myResults = myCursor.fetchall()
 
             for item in myResults:
-                cartItems.append(CartItem(item[0], item[1], item[2]))
+                cartItems.append(CartItem(item[0], item[1], item[2], item[3]))
         except Exception as e:
             print("pulldownCart(): Failed to query database: " + str(e))
         finally:
@@ -85,7 +86,7 @@ def pulldownCart(driver, empID):
         mydb.close()
         return cartItems
 
-def removeFromCart(driver, empID, itemID):
+def removeFromCart(itemID):
     # Open connection
     try:
         mydb = mysql.connector.connect(
@@ -97,7 +98,7 @@ def removeFromCart(driver, empID, itemID):
 
         # Delete the item with the appropriate ID
         myCursor = mydb.cursor()
-        query = "DELETE FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " AND Product_ID = " + str(itemID) + ";"
+        query = "DELETE FROM Shopping_Cart_Items WHERE ID = " + str(itemID) + ";"
         try:
             myCursor.execute(query)
             mydb.commit()
@@ -198,3 +199,34 @@ def driverCheckout(driver, empID, cartItems):
         print("driverCheckout(): Failed to connect: " + str(e))
     finally:
         mydb.close()
+
+# def getOutstandingPurchases(driver, empID):
+#     cartItems = []
+
+#     # Open connection
+#     try:
+#         mydb = mysql.connector.connect(
+#             host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+#             user="admin",
+#             password="adminpass",
+#             database="DriverRewards"
+#         )
+
+#         # Find all items linked to this driver and employer
+#         myCursor = mydb.cursor()
+#         query = "SELECT Product_ID, Product_Name, Point_Cost FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " ORDER BY Product_Name;"
+#         try:
+#             myCursor.execute(query)
+#             myResults = myCursor.fetchall()
+
+#             for item in myResults:
+#                 cartItems.append(CartItem(item[0], item[1], item[2]))
+#         except Exception as e:
+#             print("pulldownCart(): Failed to query database: " + str(e))
+#         finally:
+#             myCursor.close()
+#     except Exception as e:
+#         print("pulldownCart(): Failed to connect: " + str(e))
+#     finally:
+#         mydb.close()
+#         return cartItems
