@@ -13,7 +13,7 @@ from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
 from viewsFunctions.FindCompany import applyToCompany
 from viewsFunctions.ApproveDriver import approveDriver
-from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout, getOutstandingPurchases
+from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout, getOutstandingPurchases, cancelPurchase
 from SponsorCatalog import searchGeneralAPI
 from .forms import UserForm, UpdateForm, UpdatePass, UnameForm
 from django.contrib.auth.models import User
@@ -476,6 +476,11 @@ def confirmThisCart(request):
 
 def viewMyPurchases(request):
     driverUser = request.user.username
+
+    # If an item was clicked to be canceled, do it here before reloading the page
+    if request.method == "POST":
+        itemID = int(request.POST.get('itemID'))
+        cancelPurchase(itemID)
 
     purchasedItems = getOutstandingPurchases(driverUser)
     driverObj = pullDriverProfile(driverUser)

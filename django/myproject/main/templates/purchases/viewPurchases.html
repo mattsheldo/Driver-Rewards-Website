@@ -7,7 +7,7 @@
 		<strong>{{ item.name }}</strong>
 		<br>
 		{{ item.pointCost }} points
-		<form method="POST" action="/home/cart_list/cart/">
+		<form method="POST" action="/home/purchases/">
 			{% csrf_token %}
 			<input type="submit" value="Cancel">
 			<input type="hidden" value="{{ item.dbid }}" name="itemID">

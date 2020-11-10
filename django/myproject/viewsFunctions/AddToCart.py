@@ -234,3 +234,28 @@ def getOutstandingPurchases(driver):
     finally:
         mydb.close()
         return items
+
+def cancelPurchase(itemID):
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Delete the item with the appropriate ID
+        myCursor = mydb.cursor()
+        query = "DELETE FROM Purchase_History WHERE ID = " + str(itemID) + ";"
+        try:
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("cancelPurchase(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("cancelPurchase(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()

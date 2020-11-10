@@ -5,7 +5,7 @@
 	<br>
 	{% for item in itemList %}
 	<div>
-		<strong>{{ item.name }}</strong>
+		<a href="{{ item.itemURL }}" target="_blank" style="color: black;"><strong>{{ item.name }}</strong></a>
 		<br>
 		{{ item.points }} points
 		<form method="POST" action="/home/catalogs/view/">
