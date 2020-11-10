@@ -2,12 +2,13 @@ from ebaysdk.finding import Connection as Finding
 from ebaysdk.exception import ConnectionError
 
 class CatalogItem:
-    def __init__(self, itemID, name, price, shipping, points):
+    def __init__(self, itemID, name, price, shipping, points, itemURL):
         self.itemID = itemID
         self.name = name
         self.price = price
         self.shipping = shipping
         self.points = points
+        self.itemURL = itemURL
 
 def searchGeneralAPI(keyword):
     data = {}
@@ -45,7 +46,8 @@ def searchGeneralAPI(keyword):
             itemShipping = item['shippingInfo']['shippingServiceCost']['value']
         else:
             itemShipping = 0.0
-        foundItems.append(CatalogItem(int(itemID), itemName, float(itemPrice), float(itemShipping), 0.0))
+        itemURL = item['viewItemURL']
+        foundItems.append(CatalogItem(int(itemID), itemName, float(itemPrice), float(itemShipping), 0.0, itemURL))
 
         if len(foundItems) >= 10:
             return foundItems
