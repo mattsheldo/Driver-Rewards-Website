@@ -1,5 +1,6 @@
 import mysql.connector
 import time
+from datetime import datetime, timedelta
 
 class CartItem:
     def __init__(self, pid, name, pointCost, dbid):
@@ -200,33 +201,36 @@ def driverCheckout(driver, empID, cartItems):
     finally:
         mydb.close()
 
-# def getOutstandingPurchases(driver, empID):
-#     cartItems = []
+def getOutstandingPurchases(driver):
+    items = []
 
-#     # Open connection
-#     try:
-#         mydb = mysql.connector.connect(
-#             host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
-#             user="admin",
-#             password="adminpass",
-#             database="DriverRewards"
-#         )
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
 
-#         # Find all items linked to this driver and employer
-#         myCursor = mydb.cursor()
-#         query = "SELECT Product_ID, Product_Name, Point_Cost FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " ORDER BY Product_Name;"
-#         try:
-#             myCursor.execute(query)
-#             myResults = myCursor.fetchall()
+        # Look for all purchased items within the last 24 hours by the current driver
+        cutoffTime = datetime.now() - timedelta(hours=24)
+        timeStr = cutoffTime.strftime('%Y-%m-%d %H:%M:%S')
 
-#             for item in myResults:
-#                 cartItems.append(CartItem(item[0], item[1], item[2]))
-#         except Exception as e:
-#             print("pulldownCart(): Failed to query database: " + str(e))
-#         finally:
-#             myCursor.close()
-#     except Exception as e:
-#         print("pulldownCart(): Failed to connect: " + str(e))
-#     finally:
-#         mydb.close()
-#         return cartItems
+        myCursor = mydb.cursor()
+        query = "SELECT Product_ID, Product_Name, Point_Total, ID FROM Purchase_History WHERE Username = '" + driver + "' AND Date_ > '" + timeStr + "';"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for item in myResults:
+                items.append(CartItem(item[0], item[1], item[2], item[3]))
+        except Exception as e:
+            print("getOutstandingPurchases(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("getOutstandingPurchases(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return items
