@@ -43,5 +43,6 @@ urlpatterns = [
     path('home/cart_list/', views.seeMyCarts, name="driver-cart-list"),
     path('home/cart_list/cart/', views.seeThisCart, name="view-cart"),
     path('home/cart_list/confirm/', views.confirmThisCart, name="confirm-cart"),
+    path('home/purchases/', views.viewMyPurchases, name="view-purchases"),
     path('', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
 ]

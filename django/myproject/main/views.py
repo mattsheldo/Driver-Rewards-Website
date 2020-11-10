@@ -13,7 +13,7 @@ from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
 from viewsFunctions.FindCompany import applyToCompany
 from viewsFunctions.ApproveDriver import approveDriver
-from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout
+from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout, getOutstandingPurchases
 from SponsorCatalog import searchGeneralAPI
 from .forms import UserForm, UpdateForm, UpdatePass, UnameForm
 from django.contrib.auth.models import User
@@ -412,7 +412,7 @@ def seeThisCart(request):
     else:
         comp = int(request.POST.get('compID'))
         itemID = int(request.POST.get('itemID'))
-        removeFromCart(driverUser, comp, itemID)
+        removeFromCart(itemID)
 
     cartItems = pulldownCart(driverUser, comp)
 
@@ -473,6 +473,14 @@ def confirmThisCart(request):
         driverCheckout(driverUser, comp, cartItems)
         
         return redirect('//54.88.218.67/home/')
+
+def viewMyPurchases(request):
+    driverUser = request.user.username
+
+    purchasedItems = getOutstandingPurchases(driverUser)
+    driverObj = pullDriverProfile(driverUser)
+
+    return render(request, 'purchases/viewPurchases.html', {'itemList':purchasedItems, 'drivObj':driverObj})
 
 def resetPuname(request):
     if request.method == 'POST':	

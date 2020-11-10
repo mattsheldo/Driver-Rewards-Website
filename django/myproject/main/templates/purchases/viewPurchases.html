@@ -1,16 +1,6 @@
 {% extends "driverRewards/basic.html" %}
 {% block content %}
-	<h1>{{ comp.name }} Shopping Cart</h1>
-	<br>
-	<h4>Total Cost: <strong>{{ totalPoints }}</strong> points</h4>
-	{% if totalPoints < drivPoints and totalPoints > 0 %}
-		<input type="button" onclick="location.href='//54.88.218.67/home/cart_list/confirm/?comp={{ comp.cid }}';" value="Go to Checkout" />
-		<br>
-	{% elif totalPoints == 0 %}
-		<p>There are no items in this cart to checkout</p>
-	{% else %}
-		<p>Sorry, you do not currently have enough points to checkout with this cart</p>
-	{% endif %}
+	<h1>My Outstanding (Cancelable) Purchases</h1>
 	<br>
 	{% for item in itemList %}
 	<div>
@@ -19,9 +9,8 @@
 		{{ item.pointCost }} points
 		<form method="POST" action="/home/cart_list/cart/">
 			{% csrf_token %}
-			<input type="submit" value="Remove">
+			<input type="submit" value="Cancel">
 			<input type="hidden" value="{{ item.dbid }}" name="itemID">
-			<input type="hidden" value="{{ comp.cid }}" name="compID">
 		</form>
 	</div>
 	<br>
@@ -29,7 +18,10 @@
 {% endblock content %}
 
 {% block sidebar %}
-	<p>My Points: <strong>{{ drivPoints }}</strong></p>
+	<h3>{{ drivObj.first }} {{ drivObj.last }}'s Points:</h3>
+        {% for entry in drivObj.pointObjs %}
+                <p>{{ entry.employerName }}: {{ entry.pointTotal }}</p>
+        {% endfor %}	
 {% endblock sidebar %}
 
 {% block extraButtons %}
