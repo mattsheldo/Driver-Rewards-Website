@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, SetPasswordForm
 
 class UserForm(UserCreationForm):
     prefName = forms.CharField(label='Preferred Name', max_length=128)
@@ -27,7 +27,10 @@ class UpdatePass(PasswordChangeForm):
     class Meta:
         fields = {'old_password','new_password1','new_password2',}
 
-
+class UnameForm(forms.Form):
+    uname = forms.CharField(label='Username', max_length=128)
+    class Meta:
+        fields = {'uname'}
 
 class UpdateForm(forms.Form):
     fname = forms.CharField(label='First Name', max_length=128)

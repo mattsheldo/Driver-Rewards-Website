@@ -4,6 +4,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     #path('create/', views.createAcc, name='createAcc-home'),
+    path('reset/', views.resetPuname, name='reset-pass'),
+    path('reset/pass/', views.resetP, name='reset-p'),
     path('create/', views.createAcc, name='createAcc-home'),
     path('logout/create/', views.createAcc, name='createAcc-home2'),
     path('logout/', auth_views.LogoutView.as_view(template_name='logout/logout.html'), name='logout'),
@@ -40,5 +42,6 @@ urlpatterns = [
     path('home/admin_catalogs/view/', views.adminViewCatalog, name="admin-catalog"),
     path('home/cart_list/', views.seeMyCarts, name="driver-cart-list"),
     path('home/cart_list/cart/', views.seeThisCart, name="view-cart"),
+    path('home/cart_list/confirm/', views.confirmThisCart, name="confirm-cart"),
     path('', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
 ]

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
+from django.contrib.auth import login, update_session_auth_hash
 from viewsFunctions.ProfilePage import getUserInfo 
 from viewsFunctions.UpdateProfilePage import updateUserInfo
 from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pullSponsorProfile
@@ -12,9 +13,9 @@ from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
 from viewsFunctions.FindCompany import applyToCompany
 from viewsFunctions.ApproveDriver import approveDriver
-from viewsFunctions.AddToCart import addToCart, pulldownCart
+from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout
 from SponsorCatalog import searchGeneralAPI
-from .forms import UserForm, UpdateForm, UpdatePass
+from .forms import UserForm, UpdateForm, UpdatePass, UnameForm
 from django.contrib.auth.models import User
 
 import mysql.connector
@@ -404,13 +405,26 @@ def seeMyCarts(request):
 
 def seeThisCart(request):
     driverUser = request.user.username
-    comp = request.GET['comp']
+    comp = -1
+
+    if request.method == "GET":
+        comp = int(request.GET['comp'])
+    else:
+        comp = int(request.POST.get('compID'))
+        itemID = int(request.POST.get('itemID'))
+        removeFromCart(driverUser, comp, itemID)
+
     cartItems = pulldownCart(driverUser, comp)
 
     compProf = drPullCompanyProfile(comp)
     drivPoints = getPoints(driverUser, compProf.cid)
 
-    return render(request, 'cart/viewMyCart.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints})
+    # Get total cost of cart
+    pointCost = 0
+    for i in cartItems:
+        pointCost += i.pointCost
+
+    return render(request, 'cart/viewMyCart.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints, 'totalPoints':pointCost})
 
 def adminSeeCart(request):
     driverUser = request.GET['dUser']
@@ -430,3 +444,56 @@ def sponsorSeeCart(request):
     drivPoints = getPoints(driverUser, compProf.cid)
 
     return render(request, 'cart/sponsorViewCart.html', {'itemList':cartItems, 'comp':compProf, 'dUser':driverUser, 'drivPoints':drivPoints})
+
+def confirmThisCart(request):
+    driverUser = request.user.username
+
+    # For when you load the page
+    if request.method == "GET":
+        comp = int(request.GET['comp'])
+
+        cartItems = pulldownCart(driverUser, comp)
+        compProf = drPullCompanyProfile(comp)
+        drivPoints = getPoints(driverUser, compProf.cid)
+
+        # Get total cost of cart
+        pointCost = 0
+        for i in cartItems:
+            pointCost += i.pointCost
+
+        diff = drivPoints - pointCost
+
+        return render(request, 'cart/confirmPurchase.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints, 'totalPoints':pointCost, 'diff':diff})
+    # For when you confirm your purchase
+    else:
+        comp = int(request.POST.get('compID'))
+        newPoints = int(request.POST.get('newPoints'))
+                
+        cartItems = pulldownCart(driverUser, comp)
+        driverCheckout(driverUser, comp, cartItems)
+        
+        return redirect('//54.88.218.67/home/')
+
+def resetPuname(request):
+    if request.method == 'POST':	
+        form = UnameForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get('uname')
+            user = User.objects.get(username=name) 
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request,user)
+            return redirect('//54.88.218.67/reset/pass/')
+    else:
+        form = UnameForm()
+        return render(request, 'login/reset.html', {'form':form})
+
+def resetP(request):
+    if request.method == 'POST':
+        form = SetPasswordForm(user=request.user,data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect('//54.88.218.67/')
+    else:
+        form = SetPasswordForm(user=request.user)
+    return render(request, 'login/preset.html', {'form':form})
