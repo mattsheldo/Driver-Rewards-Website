@@ -105,7 +105,7 @@ CREATE TABLE Driver_Points(
 CREATE TABLE Driver_Alerts(
 	ID INT NOT NUll,
   Username VARCHAR(150) NOT NULL,
-  Type_ CHAR(2) NOT NULL,     -- oc (order completed), pc (points updated), oi (order issue)
+  Type_ CHAR(2) NOT NULL,     -- op (order placed), pc (points updated), oi (order issue)
   Message_ VARCHAR(150) NOT NULL,
   CONSTRAINT AlPk PRIMARY KEY(ID),
   CONSTRAINT AlDrFk FOREIGN KEY(Username) REFERENCES Drivers(Username)
