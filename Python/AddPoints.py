@@ -1,6 +1,47 @@
 import mysql.connector
 from datetime import datetime
 
+def setPointsAlert(driver):
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Get the next available id
+        myid = 0
+        myCursor = mydb.cursor()
+        query = "SELECT ID FROM Driver_Alerts ORDER BY ID DESC LIMIT 1;"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for i in myResults:
+                myid = i[0] + 1
+        except Exception as e:
+            print("setPointsAlert(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Tell the driver that their points were updated
+        myCursor = mydb.cursor()
+        query = "INSERT INTO Driver_Alerts VALUES (" + str(myid) + ", '" + driver + "', 'pc', 'Your points have been updated');"
+        try:
+            # Execute query and get result
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("setPointsAlert(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("setPointsAlert(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+
 def addPoints(sponsor, driver, currentPoints, newPoints, addB):
     newTotal = 0
     changeType = ""
@@ -47,6 +88,9 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
             print("addPoints(): Failed to update database: " + str(e))
         finally:
             myCursor.close()
+
+        # Alert the driver
+        setPointsAlert(driver)
 
         # Get the last used ID from Point_History
         myid = 0
@@ -112,6 +156,9 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
             print("addPoints(): Failed to update database: " + str(e))
         finally:
             myCursor.close()
+
+        # Alert the driver
+        setPointsAlert(driver)
 
         # Get the last used ID from Point_History
         myid = 0
