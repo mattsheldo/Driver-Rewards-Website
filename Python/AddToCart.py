@@ -279,7 +279,7 @@ def getOutstandingPurchases(driver):
         mydb.close()
         return items
 
-def cancelPurchase(itemID):
+def cancelPurchase(driver, itemID, itemCost):
     # Open connection
     try:
         mydb = mysql.connector.connect(
@@ -288,6 +288,49 @@ def cancelPurchase(itemID):
             password="adminpass",
             database="DriverRewards"
         )
+
+        # Get the employer ID from purchase history
+        empID = -1
+        myCursor = mydb.cursor()
+        query = "SELECT Employer_ID FROM Purchase_History WHERE ID = " + str(itemID) + ";"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for p in myResults:
+                empID = p[0]
+        except Exception as e:
+            print("cancelPurchase(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Get the current driver's points first
+        dPoints = 0
+        myCursor = mydb.cursor()
+        query = "SELECT Point_Total FROM Driver_Points WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(empID) + ";"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for p in myResults:
+                dPoints = p[0]
+        except Exception as e:
+            print("cancelPurchase(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        dPoints += itemCost
+
+        # Then give them their points back
+        myCursor = mydb.cursor()
+        query = "UPDATE Driver_Points SET Point_Total = " + str(dPoints) + " WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(empID) + ";"
+        try:
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("cancelPurchase(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
 
         # Delete the item with the appropriate ID
         myCursor = mydb.cursor()
