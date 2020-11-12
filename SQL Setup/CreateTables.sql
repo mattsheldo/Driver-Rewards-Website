@@ -49,7 +49,7 @@ CREATE TABLE Point_History(
   Point_Cost INT NOT NULL,
   Type_Of_Change CHAR(3) NOT NULL,     -- add or sub
   Sponsor_ID VARCHAR(150),     -- Either Sponsor_ID or Admin_ID can be NULL, but NOT BOTH
-  Admin_Id VARCHAR(150),
+  Admin_ID VARCHAR(150),
   CONSTRAINT PntPK PRIMARY KEY(ID),
   CONSTRAINT PntAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
   CONSTRAINT PntSpFK FOREIGN KEY(Sponsor_ID) REFERENCES Sponsors(Username),
@@ -64,7 +64,7 @@ CREATE TABLE Shopping_Cart_Items(
   Employer_ID INT NOT NULL,
   Point_Cost INT NOT NULL,
   Sponsor_ID VARCHAR(150),
-  Admin_Id VARCHAR(150),
+  Admin_ID VARCHAR(150),
   Product_ID BIGINT NOT NULL,
   Product_Name VARCHAR(150) NOT NULL,
   CONSTRAINT CrtPK PRIMARY KEY(ID),
@@ -83,7 +83,7 @@ CREATE TABLE Purchase_History(
   Point_Total INT NOT NULL,
   Product_Name VARCHAR(150) NOT NULL,
   Sponsor_ID VARCHAR(150),
-  Admin_Id VARCHAR(150),
+  Admin_ID VARCHAR(150),
   Product_ID BIGINT NOT NULL,
   CONSTRAINT PchPK PRIMARY KEY(ID),
   CONSTRAINT PchAccFK FOREIGN KEY(Username) REFERENCES Drivers(Username),
