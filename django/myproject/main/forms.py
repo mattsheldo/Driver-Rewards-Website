@@ -44,4 +44,12 @@ class UpdateForm(forms.Form):
         fields = {'fname','lname','prefName','email','phone','address',}
 
 
+class AlertFilters(forms.Form):
+    pointChange = forms.BooleanField(label='Point Change Notifications', initial='True', required=False)
+    orderCompletion = forms.BooleanField(label='Order Completion Notifications', initial='True', required=False)
+    orderIssue = forms.BooleanField(label='Order Issue Notifications', initial='True', required=False)
+    
+    class Meta:
+        fields = {'pointChange','orderCompletion','orderIssue'}
+
 

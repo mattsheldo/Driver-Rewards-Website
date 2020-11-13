@@ -108,6 +108,19 @@ def drPullCompanyProfile(emp):
         mydb.close()
         return profileObj
 
+#def removeComp(driver, empID):
+   # Open connection
+   # try:
+     #   mydb = mysql.connector.connect(
+    #        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+       #     user="admin",
+      #      password="adminpass",
+     #       database="DriverRewards"
+    #    )
+   #     myCursor = mydb.cursor()
+     #   query = "DELETE Driver_User FROM (auth_user JOIN Driver_Points ON auth_user.username = Driver_Points.Driver_User) WHERE auth_user.username = '"+driver+"' AND Employer_ID = '"str(+empID+)"';"   
+   # return 0
+
 def getPoints(driver, empID):
     dPoints = 0
 

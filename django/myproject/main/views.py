@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
 from django.contrib.auth import login, update_session_auth_hash
-from viewsFunctions.ProfilePage import getUserInfo 
+from viewsFunctions.ProfilePage import getUserInfo, getUserAlerts, deleteUserMsg, updateFilter 
 from viewsFunctions.UpdateProfilePage import updateUserInfo
+from viewsFunctions.UpdateBillPage import updateBillInfo
 from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pullSponsorProfile
 from viewsFunctions.SponsorList import SponsorListItem, pulldownAdmins, pulldownSponsors
 from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile
@@ -15,7 +16,7 @@ from viewsFunctions.FindCompany import applyToCompany
 from viewsFunctions.ApproveDriver import approveDriver
 from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout, getOutstandingPurchases, cancelPurchase
 from SponsorCatalog import searchGeneralAPI
-from .forms import UserForm, UpdateForm, UpdatePass, UnameForm
+from .forms import UserForm, UpdateForm, UpdatePass, UnameForm, AlertFilters
 from django.contrib.auth.models import User
 
 import mysql.connector
@@ -51,7 +52,23 @@ def home(request):
     infoList = getUserInfo(loginUsername, accType)
     if accType == "d":
         driverObj = pullDriverProfile(loginUsername)
-        return render(request, 'homepage/homepage.html', {'driverObj':driverObj})
+        if request.method == 'POST':
+            form = AlertFilters(request.POST)
+            if form.is_valid():
+                pc = form.cleaned_data['pointChange']
+                oc = form.cleaned_data['orderCompletion']
+                oi = form.cleaned_data['orderIssue']
+                updateFilter(loginUsername, pc, oc, oi)
+                alerts = getUserAlerts(loginUsername, pc, oc, oi) 
+                for i in alerts:
+                    if str(i.msgid) in request.POST:
+                        deleteUserMsg(i.msgid)
+                        alerts = getUserAlerts(loginUsername, pc, oc, oi)
+                return render(request, 'homepage/homepage.html', {'driverObj':driverObj,'form':form,'alerts':alerts})
+        else:
+            form = AlertFilters()
+            alerts = getUserAlerts(loginUsername, True, True, True)
+            return render(request, 'homepage/homepage.html', {'driverObj':driverObj,'form':form,'alerts':alerts})
     elif accType == "s":
         return render(request, 'homepage/sponsor_homepage.html')
     elif accType == "a":
@@ -95,6 +112,16 @@ def viewAllDrivers(request):
 
 def viewAllSponsors(request):
     sponsorList = pulldownSponsors()
+    if request.method == "POST":
+        daUser = request.POST.get('uname')
+       #accType = verifyAccount(daUser)
+        sUser = getID(daUser)
+    #companyProf = pullCompanyProfile(daUser)
+    if request.POST.get("pointVal"):
+        dollarValue = request.POST.get("pointVal")
+        if dollarValue:
+            UpdatePVal(sUser, dollarValue)
+            sponsorList = pulldownSponsors()
     return render(request, 'points/sponsorList.html', {'sponsorList':sponsorList})
 
 def viewAllAdmins(request):
@@ -137,16 +164,28 @@ def adviewAdminProfile(request):
     adminObj = pullAdminProfile(uname)
     return render(request, 'profile/admin_view_admin.html', {'adminObj':adminObj})
 
+def updateBill(request):
+    if request.method == "POST":
+        daUser = request.POST.get['uname']
+        sUser = getID(daUser)
+        endDate = "11/21/2020"
+        total = 412
+        paid = "No"
+        companyProf = pullCompanyProfile(daUser)
+        bill = UpdateBillInfo(sUser,endDate,total,paid)
+        return render(request, 'profile/updateBill.html', {'companyProf':companyProf}) 
+
 def adminUpdatePointValue(request):
     daUser = ""
     if request.method == "POST":
         daUser = request.POST.get('uname')
     accType = verifyAccount(daUser)
+    sUser = getID(daUser)
     companyProf = pullCompanyProfile(daUser)
     if request.POST.get("pointVal"):
         dollarValue = request.POST.get("pointVal")
     if dollarValue:
-        UpdatePVal(daUser, dollarValue)
+        UpdatePVal(sUser, dollarValue)
         return render(request, 'points/sponsorList.html', {'companyProf':companyProf})
 
 def UpdatePointVal(request):
@@ -194,8 +233,11 @@ def viewMyCompanies(request):
 
 def viewACompany(request):
     empID = request.GET["comp"]
+    driverUser = request.user.username
     companyProf = drPullCompanyProfile(empID)
     dPoints = getPoints(request.user.username, empID)
+    #if request.POST.get("resign")
+     #   removeComp(driverUser, empID)
     return render(request, 'pointValue/compProfile.html', {'companyProf':companyProf, 'dPoints':dPoints})
 
 def updateMyPersonalInfo(request):
@@ -480,7 +522,8 @@ def viewMyPurchases(request):
     # If an item was clicked to be canceled, do it here before reloading the page
     if request.method == "POST":
         itemID = int(request.POST.get('itemID'))
-        cancelPurchase(itemID)
+        itemCost = int(request.POST.get('itemCost'))
+        cancelPurchase(driverUser, itemID, itemCost)
 
     purchasedItems = getOutstandingPurchases(driverUser)
     driverObj = pullDriverProfile(driverUser)

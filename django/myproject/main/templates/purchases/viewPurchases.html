@@ -11,6 +11,7 @@
 			{% csrf_token %}
 			<input type="submit" value="Cancel">
 			<input type="hidden" value="{{ item.dbid }}" name="itemID">
+			<input type="hidden" value="{{ item.pointCost }}" name="itemCost">
 		</form>
 	</div>
 	<br>

@@ -16,7 +16,7 @@
 	<p>My Points: {{ drivPoints }}</p>
 	<p>Total Point Cost: {{ totalPoints }}</p>
 	<p>Net Points Remaining: <strong>{{ diff }}</strong></p>
-	{% if totalPoints < drivPoints %}
+	{% if totalPoints <= drivPoints %}
                 <form method="POST" action="/home/cart_list/confirm/">
 			{% csrf_token %}
 			<input type="submit" value="Confirm Purchase">

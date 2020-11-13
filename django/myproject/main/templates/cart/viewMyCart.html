@@ -3,7 +3,7 @@
 	<h1>{{ comp.name }} Shopping Cart</h1>
 	<br>
 	<h4>Total Cost: <strong>{{ totalPoints }}</strong> points</h4>
-	{% if totalPoints < drivPoints and totalPoints > 0 %}
+	{% if totalPoints <= drivPoints and totalPoints > 0 %}
 		<input type="button" onclick="location.href='//54.88.218.67/home/cart_list/confirm/?comp={{ comp.cid }}';" value="Go to Checkout" />
 		<br>
 	{% elif totalPoints == 0 %}
