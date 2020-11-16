@@ -139,3 +139,35 @@ def getPoints(driver, empID):
     finally:
         mydb.close()
         return dPoints
+
+def getSpCompany(sponsor):
+    compID = -1
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Get the employer ID of the current sponsor
+        myCursor = mydb.cursor()
+        query = "SELECT Employer_ID FROM Sponsors WHERE Username = '" + sponsor + "';"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for i in myResults:
+                compID = i[0]
+        except Exception as e:
+            print("getSpCompany(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("getSpCompany(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return compID
