@@ -245,6 +245,190 @@ def driverCheckout(driver, empID, cartItems):
     finally:
         mydb.close()
 
+def sponsorCheckout(driver, empID, cartItems, sponsor):
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Get current driver's points
+        drivPoints = 0
+        myCursor = mydb.cursor()
+        query = "SELECT Point_Total FROM Driver_Points WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(empID) + ";"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for r in myResults:
+                drivPoints = r[0]
+        except Exception as e:
+            print("sponsorCheckout(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        myID = 0
+        for i in cartItems:
+            # Subtract the points
+            drivPoints -= i.pointCost
+
+            # Remove item from the cart
+            myCursor = mydb.cursor()
+            query = "DELETE FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " AND Product_ID = " + str(i.pid) + ";"
+            try:
+                myCursor.execute(query)
+                mydb.commit()
+            except Exception as e:
+                print("sponsorCheckout(): Failed to update database: " + str(e))
+            finally:
+                myCursor.close()
+
+            # Get next available id
+            if myID == 0:
+                myCursor = mydb.cursor()
+                query = "SELECT ID FROM Purchase_History ORDER BY ID DESC LIMIT 1;"
+                try:
+                    myCursor.execute(query)
+                    myResults = myCursor.fetchall()
+
+                    for r in myResults:
+                        myID = r[0] + 1
+                except Exception as e:
+                    print("sponsorCheckout(): Failed to query database: " + str(e))
+                finally:
+                    myCursor.close()
+            # If it's not the first iteration, just increase the ID by 1
+            else:
+                myID += 1
+
+            # Add item to purchase history with the current timestamp
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+            # Make sure to protect against any apostraphes in the item name
+            sqlItemName = i.name.replace("'", "''")
+
+            myCursor = mydb.cursor()
+            query = "INSERT INTO Purchase_History (ID, Username, Employer_ID, Date_, Point_Total, Product_Name, Product_ID, Sponsor_ID) VALUES (" + str(myID) + ", '" + driver + "', " + str(empID) + ", '" + timestamp + "', " + str(i.pointCost) + ", '" + sqlItemName + "', " + str(i.pid) + ", '" + sponsor + "');"
+            try:
+                myCursor.execute(query)
+                mydb.commit()
+            except Exception as e:
+                print("sponsorCheckout(): Failed to update database: " + str(e))
+            finally:
+                myCursor.close()
+
+        # Update the driver's points
+        myCursor = mydb.cursor()
+        query = "UPDATE Driver_Points SET Point_Total = " + str(drivPoints) + " WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(empID) + ";"
+        try:
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("sponsorCheckout(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Alert the driver that the order was placed
+        setOrderPlacedAlert(driver)
+    except Exception as e:
+        print("sponsorCheckout(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+
+def adminCheckout(driver, empID, cartItems, admin):
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Get current driver's points
+        drivPoints = 0
+        myCursor = mydb.cursor()
+        query = "SELECT Point_Total FROM Driver_Points WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(empID) + ";"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for r in myResults:
+                drivPoints = r[0]
+        except Exception as e:
+            print("adminCheckout(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        myID = 0
+        for i in cartItems:
+            # Subtract the points
+            drivPoints -= i.pointCost
+
+            # Remove item from the cart
+            myCursor = mydb.cursor()
+            query = "DELETE FROM Shopping_Cart_Items WHERE Username = '" + driver + "' AND Employer_ID = " + str(empID) + " AND Product_ID = " + str(i.pid) + ";"
+            try:
+                myCursor.execute(query)
+                mydb.commit()
+            except Exception as e:
+                print("adminCheckout(): Failed to update database: " + str(e))
+            finally:
+                myCursor.close()
+
+            # Get next available id
+            if myID == 0:
+                myCursor = mydb.cursor()
+                query = "SELECT ID FROM Purchase_History ORDER BY ID DESC LIMIT 1;"
+                try:
+                    myCursor.execute(query)
+                    myResults = myCursor.fetchall()
+
+                    for r in myResults:
+                        myID = r[0] + 1
+                except Exception as e:
+                    print("adminCheckout(): Failed to query database: " + str(e))
+                finally:
+                    myCursor.close()
+            # If it's not the first iteration, just increase the ID by 1
+            else:
+                myID += 1
+
+            # Add item to purchase history with the current timestamp
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+            # Make sure to protect against any apostraphes in the item name
+            sqlItemName = i.name.replace("'", "''")
+
+            myCursor = mydb.cursor()
+            query = "INSERT INTO Purchase_History (ID, Username, Employer_ID, Date_, Point_Total, Product_Name, Product_ID, Admin_ID) VALUES (" + str(myID) + ", '" + driver + "', " + str(empID) + ", '" + timestamp + "', " + str(i.pointCost) + ", '" + sqlItemName + "', " + str(i.pid) + ", '" + admin + "');"
+            try:
+                myCursor.execute(query)
+                mydb.commit()
+            except Exception as e:
+                print("adminCheckout(): Failed to update database: " + str(e))
+            finally:
+                myCursor.close()
+
+        # Update the driver's points
+        myCursor = mydb.cursor()
+        query = "UPDATE Driver_Points SET Point_Total = " + str(drivPoints) + " WHERE Driver_User = '" + driver + "' AND Employer_ID = " + str(empID) + ";"
+        try:
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("adminCheckout(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Alert the driver that the order was placed
+        setOrderPlacedAlert(driver)
+    except Exception as e:
+        print("adminCheckout(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+
 def getOutstandingPurchases(driver):
     items = []
 
