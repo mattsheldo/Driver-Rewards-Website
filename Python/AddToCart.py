@@ -598,6 +598,41 @@ def getOutstandingPurchases(driver):
         mydb.close()
         return items
 
+def spGetOutstandingPurchases(driver, sponsor):
+    items = []
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Look for all purchased items within the last 24 hours by the current driver
+        # Only take items purchased from the current sponsor
+        cutoffTime = datetime.now() - timedelta(hours=24)
+        timeStr = cutoffTime.strftime('%Y-%m-%d %H:%M:%S')
+
+        myCursor = mydb.cursor()
+        query = "SELECT Product_ID, Product_Name, Point_Total, ID FROM Purchase_History as PH JOIN Sponsors as S ON PH.Employer_ID = S.Employer_ID WHERE S.Username = '" + sponsor + "' AND PH.Username = '" + driver + "' AND Date_ > '" + timeStr + "';"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for item in myResults:
+                items.append(CartItem(item[0], item[1], item[2], item[3]))
+        except Exception as e:
+            print("spGetOutstandingPurchases(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("spGetOutstandingPurchases(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return items
+
 def cancelPurchase(driver, itemID, itemCost):
     # Open connection
     try:
