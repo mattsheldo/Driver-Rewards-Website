@@ -13,6 +13,16 @@
 	{% endfor %}
 {% endblock content %}
 
+{% block sidebar %}
+	<form method="POST" action="/home/catalog/">
+		{% csrf_token %}
+		<h5>Update eBay Search String</h5>
+		<label>Current Query: {{ query }}</label>
+		<input type="text" name="newQuery">
+		<input type="submit" value="Update">
+	</form>
+{% endblock sidebar %}
+
 {% block extraButtons %}
 	<a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
 	<a class="nav-item nav-link" href="/home/point_value/">My Company</a>

@@ -14,6 +14,7 @@
 		<input type="hidden" id="userid" name="username" value="{{ driver.user }}">
 		<input type="hidden" id="pointid" name="point" value="{{ driver.pointTotal }}">
 		<input type="button" onclick="location.href='//54.88.218.67/home/drivers/viewCart/?dUser={{ driver.user }}';" value="View Cart" />
+		<input type="button" onclick="location.href='//54.88.218.67/home/drivers/purchases/?dUser={{ driver.user }}';" value="View Purchases" />
 	</form>
   {% endfor %}
   </div>

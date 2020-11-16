@@ -13,14 +13,15 @@
 {% endblock content %}
 
 {% block sidebar %}
-	<p>My Points: {{ drivPoints }}</p>
+	<p>{{ dProf.first }} {{ dProf.last }}'s Points: {{ drivPoints }}</p>
 	<p>Total Point Cost: {{ totalPoints }}</p>
 	<p>Net Points Remaining: <strong>{{ diff }}</strong></p>
 	{% if totalPoints <= drivPoints %}
-                <form method="POST" action="/home/cart_list/confirm/">
+                <form method="POST" action="/home/all_drivers/viewCart/confirm/">
 			{% csrf_token %}
 			<input type="submit" value="Confirm Purchase">
 			<input type="hidden" value="{{ comp.cid }}" name="compID">
+			<input type="hidden" name="dUser" value="{{ dUser }}">
 		</form>
         {% else %}
                 <p>Sorry, you do not currently have enough points to checkout with this cart</p>
@@ -28,11 +29,8 @@
 {% endblock sidebar %}
 
 {% block extraButtons %}
-        <a class="nav-item nav-link" href="/home/companies/">Companies</a>
-        <a class="nav-item nav-link" href="/home/catalogs/">Catalogs</a>
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+        <a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+        <a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+        <a class="nav-item nav-link" href="/home/admin_catalogs/">Catalogs</a>
 {% endblock extraButtons %}
-
-{% block rightButtons %}
-	<a class="nav-item nav-link" href="/home/purchases/">My Purchases</a>
-        <a class="nav-item nav-link" href="/home/cart_list/">My Carts</a>
-{% endblock rightButtons %}

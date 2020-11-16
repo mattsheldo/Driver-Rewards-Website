@@ -31,7 +31,6 @@ urlpatterns = [
     path('home/all_drivers/viewCart/', views.adminSeeCart, name="admin-cart"),
     path('home/all_sponsors/viewProfile/', views.adviewSponsorProfile, name="ad-view-sponsor"),
     path('home/all_sponsors/viewProfile/edit/', views.updateNotMyPersonalInfo, name="profile-sponsor"),
-    #path('home/all_sponsors/viewProfile/edit/bill/', views.updateBill, name="profile-sponsorb"),
     path('home/all_sponsors/viewProfile/edit/pass/', views.updateNotMyPass, name="profile-sponsorp"),
     path('home/all_admins/viewProfile/', views.adviewAdminProfile, name="ad-view-admin"),
     path('home/all_admins/viewProfile/edit/', views.updateNotMyPersonalInfo, name="profile-admin"),
@@ -44,5 +43,10 @@ urlpatterns = [
     path('home/cart_list/', views.seeMyCarts, name="driver-cart-list"),
     path('home/cart_list/cart/', views.seeThisCart, name="view-cart"),
     path('home/cart_list/confirm/', views.confirmThisCart, name="confirm-cart"),
+    path('home/drivers/viewCart/confirm/', views.spConfirmThisCart, name="sp-confirm-cart"),
+    path('home/all_drivers/viewCart/confirm/', views.adConfirmThisCart, name="ad-confirm-cart"),
+    path('home/purchases/', views.viewMyPurchases, name="view-purch"),
+    path('home/drivers/purchases/', views.spViewPurchases, name="sp-view-purch"),
+    path('home/all_drivers/purchases/', views.adViewPurchases, name="sp-view-purch"),
     path('', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
 ]

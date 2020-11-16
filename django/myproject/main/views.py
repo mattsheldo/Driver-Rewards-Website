@@ -1,21 +1,21 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
-from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from viewsFunctions.ProfilePage import getUserInfo, getUserAlerts, deleteUserMsg, updateFilter 
 from viewsFunctions.UpdateProfilePage import updateUserInfo
 from viewsFunctions.UpdateBillPage import updateBillInfo
 from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pullSponsorProfile
 from viewsFunctions.SponsorList import SponsorListItem, pulldownAdmins, pulldownSponsors
 from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile
-from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers
-from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints, pullAllCompanies
+from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers, addTempUname
+from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints, pullAllCompanies, getSpCompany
 from viewsFunctions.NewUserReg import addUserInfo, addUserTypeInfo
 from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
 from viewsFunctions.FindCompany import applyToCompany
 from viewsFunctions.ApproveDriver import approveDriver
-from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout, getOutstandingPurchases, cancelPurchase
-from SponsorCatalog import searchGeneralAPI
+from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout, sponsorCheckout, adminCheckout, getOutstandingPurchases, spGetOutstandingPurchases, cancelPurchase
+from SponsorCatalog import searchGeneralAPI, updateCatalog, adminUpdateCatalog
 from .forms import UserForm, UpdateForm, UpdatePass, UnameForm, AlertFilters
 from django.contrib.auth.models import User
 
@@ -53,23 +53,34 @@ def home(request):
     if accType == "d":
         driverObj = pullDriverProfile(loginUsername)
         if request.method == 'POST':
-            form = AlertFilters(request.POST)
-            if form.is_valid():
-                pc = form.cleaned_data['pointChange']
-                oc = form.cleaned_data['orderCompletion']
-                oi = form.cleaned_data['orderIssue']
-                updateFilter(loginUsername, pc, oc, oi)
-                alerts = getUserAlerts(loginUsername, pc, oc, oi) 
-                for i in alerts:
-                    if str(i.msgid) in request.POST:
-                        deleteUserMsg(i.msgid)
-                        alerts = getUserAlerts(loginUsername, pc, oc, oi)
-                return render(request, 'homepage/homepage.html', {'driverObj':driverObj,'form':form,'alerts':alerts})
+            if request.POST.get("returntoview"):
+                tempname = ""
+            else:
+                form = AlertFilters(request.POST)
+                if form.is_valid():
+                    pc = form.cleaned_data['pointChange']
+                    oc = form.cleaned_data['orderCompletion']
+                    oi = form.cleaned_data['orderIssue']
+                    updateFilter(loginUsername, pc, oc, oi)
+                    alerts = getUserAlerts(loginUsername, pc, oc, oi) 
+                    for i in alerts:
+                        if str(i.msgid) in request.POST:
+                            deleteUserMsg(i.msgid)
+                            alerts = getUserAlerts(loginUsername, pc, oc, oi)
+                    return render(request, 'homepage/homepage.html', {'driverObj':driverObj,'form':form,'alerts':alerts})
         else:
             form = AlertFilters()
             alerts = getUserAlerts(loginUsername, True, True, True)
             return render(request, 'homepage/homepage.html', {'driverObj':driverObj,'form':form,'alerts':alerts})
     elif accType == "s":
+        if request.method == 'POST':
+            if request.POST.get("changeviewd"):
+                addTempUname(loginUsername)
+                logout(request)
+                dummyuser = authenticate(request,username='dummydriver',password='testing321')
+                driverObj = pullDriverProfile('dumbydriver')
+                login(request,dummyuser)
+                return render(request, 'homepage/homepage.html', {'driverObj':driverObj})
         return render(request, 'homepage/sponsor_homepage.html')
     elif accType == "a":
         return render(request, 'homepage/admin_homepage.html')
@@ -236,8 +247,8 @@ def viewACompany(request):
     driverUser = request.user.username
     companyProf = drPullCompanyProfile(empID)
     dPoints = getPoints(request.user.username, empID)
-    #if request.POST.get("resign")
-     #   removeComp(driverUser, empID)
+    if request.POST.get("resign"):
+        removeComp(driverUser, empID)
     return render(request, 'pointValue/compProfile.html', {'companyProf':companyProf, 'dPoints':dPoints})
 
 def updateMyPersonalInfo(request):
@@ -390,6 +401,10 @@ def adminCreate(request):
     return render(request, 'createAcc/adregister.html', {'user_form':user_form})
 
 def seeMyCatalog(request):
+    if request.method == "POST":
+        newQuery = request.POST.get('newQuery')
+        updateCatalog(request.user.username, newQuery)
+
     comp = pullCompanyProfile(request.user.username)
     pointRatio = float(comp.pointRatio)
     compName = comp.name
@@ -397,7 +412,7 @@ def seeMyCatalog(request):
     itemList = searchGeneralAPI(comp.query)
     for item in itemList:
         item.points = round(item.price * pointRatio + item.shipping * pointRatio)
-    return render(request, 'catalog/sponsorCatalog.html', {'itemList':itemList, 'compName':compName})
+    return render(request, 'catalog/sponsorCatalog.html', {'itemList':itemList, 'compName':compName, 'query':comp.query})
 
 def seeMyCatalogs(request):
     driverObj = pullDriverProfile(request.user.username)
@@ -432,6 +447,13 @@ def adminCatalogs(request):
     return render(request, 'catalog/allCatalogs.html', {'compList':compList})
 
 def adminViewCatalog(request):
+    if request.method == "POST":
+        empID = request.POST.get('compID')
+        newQuery = request.POST.get('newQuery')
+        adminUpdateCatalog(empID, newQuery)
+
+        return redirect('//54.88.218.67/home/admin_catalogs/view/?comp=' + str(empID))
+
     comp = request.GET['comp']
     compProf = drPullCompanyProfile(comp)
     pointRatio = float(compProf.pointRatio)
@@ -469,23 +491,50 @@ def seeThisCart(request):
     return render(request, 'cart/viewMyCart.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints, 'totalPoints':pointCost})
 
 def adminSeeCart(request):
+    if request.method == "POST":
+        itemID = request.POST.get('itemID')
+        removeFromCart(itemID)
+
+        driverUser = request.POST.get('dUser')
+        compID = int(request.POST.get('compID'))
+
+        return redirect('//54.88.218.67/home/all_drivers/viewCart/?dUser=' + driverUser + '&comp=' + str(compID))
+
     driverUser = request.GET['dUser']
     comp = request.GET['comp']
     cartItems = pulldownCart(driverUser, comp)
 
     compProf = drPullCompanyProfile(comp)
     drivPoints = getPoints(driverUser, comp)
+    dProf = pullDriverProfile(driverUser)
 
-    return render(request, 'cart/adminViewCart.html', {'itemList':cartItems, 'comp':compProf, 'dUser':driverUser, 'drivPoints':drivPoints})
+    pointCost = 0
+    for i in cartItems:
+        pointCost += i.pointCost
+
+    return render(request, 'cart/adminViewCart.html', {'itemList':cartItems, 'comp':compProf, 'dUser':driverUser, 'drivPoints':drivPoints, 'totalPoints':pointCost, 'dProf':dProf})
 
 def sponsorSeeCart(request):
+    if request.method == "POST":
+        itemID = request.POST.get("itemID")
+        removeFromCart(itemID)
+
+        driverUser = request.POST.get('dUser')
+
+        return redirect('//54.88.218.67/home/drivers/viewCart/?dUser=' + driverUser)
+
     driverUser = request.GET['dUser']
     compProf = pullCompanyProfile(request.user.username)
     cartItems = pulldownCart(driverUser, compProf.cid)
 
     drivPoints = getPoints(driverUser, compProf.cid)
+    dProf = spPullDriverProfile(driverUser, request.user.username)
 
-    return render(request, 'cart/sponsorViewCart.html', {'itemList':cartItems, 'comp':compProf, 'dUser':driverUser, 'drivPoints':drivPoints})
+    pointCost = 0
+    for i in cartItems:
+        pointCost += i.pointCost
+
+    return render(request, 'cart/sponsorViewCart.html', {'itemList':cartItems, 'comp':compProf, 'dUser':driverUser, 'drivPoints':drivPoints, 'totalPoints':pointCost, 'dProf':dProf})
 
 def confirmThisCart(request):
     driverUser = request.user.username
@@ -509,12 +558,68 @@ def confirmThisCart(request):
     # For when you confirm your purchase
     else:
         comp = int(request.POST.get('compID'))
-        newPoints = int(request.POST.get('newPoints'))
                 
         cartItems = pulldownCart(driverUser, comp)
         driverCheckout(driverUser, comp, cartItems)
         
-        return redirect('//54.88.218.67/home/')
+        return redirect('//54.88.218.67/home/purchases')
+
+def spConfirmThisCart(request):
+    # For when you load the page
+    if request.method == "GET":
+        driverUser = request.GET['dUser']
+
+        comp = getSpCompany(request.user.username)
+
+        cartItems = pulldownCart(driverUser, comp)
+        compProf = drPullCompanyProfile(comp)
+        drivPoints = getPoints(driverUser, compProf.cid)
+        dProf = spPullDriverProfile(driverUser, request.user.username)
+
+        # Get total cost of cart
+        pointCost = 0
+        for i in cartItems:
+            pointCost += i.pointCost
+
+        diff = drivPoints - pointCost
+
+        return render(request, 'cart/spConfirmPurchase.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints, 'totalPoints':pointCost, 'diff':diff, 'dUser':driverUser, 'dProf':dProf})
+    # For when you confirm your purchase
+    else:
+        comp = int(request.POST.get('compID'))
+        driverUser = request.POST.get('dUser')
+
+        cartItems = pulldownCart(driverUser, comp)
+        sponsorCheckout(driverUser, comp, cartItems, request.user.username)                                                                     
+        return redirect('//54.88.218.67/home/drivers/purchases/?dUser=' + driverUser)
+
+def adConfirmThisCart(request):
+    # For when you load the page
+    if request.method == "GET":
+        driverUser = request.GET['dUser']
+        comp = request.GET['comp']
+
+        cartItems = pulldownCart(driverUser, comp)
+        compProf = drPullCompanyProfile(comp)
+        drivPoints = getPoints(driverUser, compProf.cid)
+        dProf = pullDriverProfile(driverUser)
+
+        # Get total cost of cart
+        pointCost = 0
+        for i in cartItems:
+            pointCost += i.pointCost
+
+        diff = drivPoints - pointCost
+
+        return render(request, 'cart/adConfirmPurchase.html', {'itemList':cartItems, 'comp':compProf, 'drivPoints':drivPoints, 'totalPoints':pointCost, 'diff':diff, 'dUser':driverUser, 'dProf':dProf})
+    # For when you confirm your purchase
+    else:
+        comp = int(request.POST.get('compID'))
+        driverUser = request.POST.get('dUser')
+
+        cartItems = pulldownCart(driverUser, comp)
+        adminCheckout(driverUser, comp, cartItems, request.user.username)
+        return redirect('//54.88.218.67/home/all_drivers/purchases/?dUser=' + driverUser)
 
 def viewMyPurchases(request):
     driverUser = request.user.username
@@ -529,6 +634,37 @@ def viewMyPurchases(request):
     driverObj = pullDriverProfile(driverUser)
 
     return render(request, 'purchases/viewPurchases.html', {'itemList':purchasedItems, 'drivObj':driverObj})
+
+def spViewPurchases(request):
+    if request.method == "POST":
+        itemID = int(request.POST.get('itemID'))
+        itemCost = int(request.POST.get('itemCost'))
+        driverUser = request.POST.get('dUser')
+        cancelPurchase(driverUser, itemID, itemCost)
+
+        return redirect('//54.88.218.67/home/drivers/purchases/?dUser=' + driverUser)
+
+    driverUser = request.GET['dUser']
+    dProf = spPullDriverProfile(driverUser, request.user.username)
+
+    purchasedItems = spGetOutstandingPurchases(driverUser, request.user.username)
+
+    return render(request, 'purchases/spViewPurchases.html', {'itemList':purchasedItems, 'dProf':dProf})
+
+def adViewPurchases(request):
+    if request.method == "POST":
+        itemID = int(request.POST.get('itemID'))
+        itemCost = int(request.POST.get('itemCost'))
+        driverUser = request.POST.get('dUser')
+        cancelPurchase(driverUser, itemID, itemCost)                                                                    
+        return redirect('//54.88.218.67/home/all_drivers/purchases/?dUser=' + driverUser)
+
+    driverUser = request.GET['dUser']
+    dProf = pullDriverProfile(driverUser)
+
+    purchasedItems = getOutstandingPurchases(driverUser)
+
+    return render(request, 'purchases/adViewPurchases.html', {'itemList':purchasedItems, 'dProf':dProf})
 
 def resetPuname(request):
     if request.method == 'POST':	

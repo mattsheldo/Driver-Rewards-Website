@@ -1,0 +1,34 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	<h1>Outstanding (Cancelable) Purchases</h1>
+	<br>
+	{% for item in itemList %}
+	<div>
+		<strong>{{ item.name }}</strong>
+		<br>
+		{{ item.pointCost }} points
+		<form method="POST" action="/home/drivers/purchases/">
+			{% csrf_token %}
+			<input type="submit" value="Cancel">
+			<input type="hidden" value="{{ item.dbid }}" name="itemID">
+			<input type="hidden" value="{{ item.pointCost }}" name="itemCost">
+			<input type="hidden" name="dUser" value="{{ dProf.user }}">
+		</form>
+	</div>
+	<br>
+	{% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+	<p>{{ dProf.first }} {{ dProf.last }}'s Points:
+        	{% for entry in dProf.pointObjs %}
+                	<strong>{{ entry.pointTotal }}</strong>
+        	{% endfor %}
+	</p>
+{% endblock sidebar %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+        <a class="nav-item nav-link" href="/home/point_value/">My Company</a>
+        <a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
+{% endblock extraButtons %}

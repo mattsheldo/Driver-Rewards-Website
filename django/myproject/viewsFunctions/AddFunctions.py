@@ -1,4 +1,5 @@
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 import mysql.connector
 
 class DriverPoints:
@@ -219,14 +220,13 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
             myCursor.close()
 
         # Get current date
-        today = datetime.today().strftime("%Y-%m-%d")
+        today = time.strftime('%Y-%m-%d %H:%M:%S')
         # Update Point_History
         myCursor = mydb.cursor()
         query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(employerID) + ", '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
         try:
             # Execute query and commit
             myCursor.execute(query)
-            myResults = myCursor.fetchall()
             mydb.commit()
         except Exception as e:
             print("addPoints(): Failed to update database: " + str(e))
@@ -288,7 +288,7 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
             myCursor.close()
 
         # Get current date
-        today = datetime.today().strftime("%Y-%m-%d")
+        today = time.strftime('%Y-%m-%d %H:%M:%S')
         # Update Point_History
         myCursor = mydb.cursor()
         query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Admin_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(employerID) + ", '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + admin + "');"

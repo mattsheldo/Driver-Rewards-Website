@@ -11,3 +11,11 @@
 	<a class="nav-item nav-link" href="/home/point_value/">My Company</a>
 	<a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
 {% endblock extraButtons %}
+
+{% block sidebar %}
+	<h3>View Website as a Driver</h3>
+	<form method='POST'>
+		{% csrf_token %}
+		<input type="submit" name="changeviewd" value="See Driver View">
+	</form>
+{% endblock sidebar %}

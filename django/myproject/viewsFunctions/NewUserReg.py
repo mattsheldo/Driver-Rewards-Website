@@ -29,7 +29,7 @@ def addUserTypeInfo(userUser,userType):
     myCursor = mydb.cursor()
 
     if userType is 'Driver':
-        query = "INSERT INTO Drivers (Username) VALUES ('"+userUser+"');"
+        query = "INSERT INTO Drivers VALUES ('"+userUser+"', 1, 1, 1);"
         query2 = "INSERT INTO Driver_Points (Driver_User, Employer_ID, Point_Total) VALUES ('"+userUser+"',-1,0);"
         myCursor.execute(query)
         myCursor.execute(query2)

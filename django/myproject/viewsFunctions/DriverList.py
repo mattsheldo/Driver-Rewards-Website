@@ -127,4 +127,20 @@ def adminPulldownDrivers():
         return driverNames
 
 
+def addTempUname(username):
+
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+
+    query = "UPDATE Drivers SET Temp_Uname = '"+username+"' WHERE Username = 'dummydriver';"
+    myCursor.execute(query)
+    myCursor.close()
+    mydb.commit()
+    mydb.close()
+
 

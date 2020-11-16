@@ -3,6 +3,15 @@
 	{% load static %}
 	<script type="text/javascript" src="{% static "main/home.js" %}"></script>
         <h1>Driver Home</h1>
+	{% if driverObj.first == "Dummy" %}
+		<form method="POST">
+			{% csrf_token %}
+			<label>---------------------------------------------------</label> <br>
+			<h3>Return to Normal view</h3>
+			<input type="submit" name="returnview" value="Return"> <br>
+			<label>---------------------------------------------------</label>
+		</form>
+	{% endif %}
         <input type="button" id="logout" value="Logout">
 {% endblock content %}
 
