@@ -164,7 +164,7 @@ def updatePointHistory(driver, empID, pointDiff):
         )
 
         # Get the next open spot in Point_History
-        myid = -1
+        myid = 0
         myCursor = mydb.cursor()
         query = "SELECT ID FROM Point_History ORDER BY ID DESC LIMIT 1;"
         try:
