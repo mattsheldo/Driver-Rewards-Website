@@ -153,7 +153,7 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
             myCursor.execute(query)
             mydb.commit()
         except Exception as e:
-            print("addPoints(): Failed to update database: " + str(e))
+            print("addPointsAdmin(): Failed to update database: " + str(e))
         finally:
             myCursor.close()
 
@@ -172,7 +172,7 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
             for i in myResults:
               myid = int(i[0]) + 1
         except Exception as e:
-            print("addPoints(): Failed to query database: " + str(e))
+            print("addPointsAdmin(): Failed to query database: " + str(e))
         finally:
             myCursor.close()
 
@@ -186,10 +186,10 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
             myCursor.execute(query)
             mydb.commit()
         except Exception as e:
-            print("addPoints(): Failed to update database: " + str(e))
+            print("addPointsAdmin(): Failed to update database: " + str(e))
         finally:
             myCursor.close()
     except Exception as e:
-        print("addPoints(): Failed to connect: " + str(e))
+        print("addPointsAdmin(): Failed to connect: " + str(e))
     finally:
         mydb.close()
