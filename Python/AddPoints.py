@@ -1,5 +1,6 @@
 import mysql.connector
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 
 def setPointsAlert(driver):
     # Open connection
@@ -109,7 +110,7 @@ def addPoints(sponsor, driver, currentPoints, newPoints, addB):
             myCursor.close()
 
         # Get current date
-        today = datetime.today().strftime("%Y-%m-%d")
+        today = time.strftime('%Y-%m-%d %H:%M:%S')
         # Update Point_History
         myCursor = mydb.cursor()
         query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(employerID) + ", '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + sponsor + "');"
@@ -177,7 +178,7 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
             myCursor.close()
 
         # Get current date
-        today = datetime.today().strftime("%Y-%m-%d")
+        today = time.strftime('%Y-%m-%d %H:%M:%S')
         # Update Point_History
         myCursor = mydb.cursor()
         query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Admin_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(employerID) + ", '" + today + "', " + str(newPoints) + ", '" + changeType + "', '" + admin + "');"

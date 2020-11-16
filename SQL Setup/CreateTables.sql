@@ -45,7 +45,7 @@ CREATE TABLE Point_History(
   ID INT NOT NULL,
   Username VARCHAR(150) NOT NULL,
   Employer_ID INT NOT NULL,
-  Date_ DATE NOT NULL,
+  Date_ DATETIME NOT NULL,
   Point_Cost INT NOT NULL,
   Type_Of_Change CHAR(3) NOT NULL,     -- add or sub
   Sponsor_ID VARCHAR(150),     -- Either Sponsor_ID or Admin_ID can be NULL, but NOT BOTH
