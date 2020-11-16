@@ -153,6 +153,88 @@ def removeFromCart(itemID):
     finally:
         mydb.close()
 
+def adUpdatePointHistory(driver, empID, pointDiff, adID):
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Get the next open spot in Point_History
+        myid = 0
+        myCursor = mydb.cursor()
+        query = "SELECT ID FROM Point_History ORDER BY ID DESC LIMIT 1;"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for i in myResults:
+                myid = i[0] + 1
+        except Exception as e:
+            print("adUpdatePointHistory(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Update the driver's point history
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+        myCursor = mydb.cursor()
+        query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Admin_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(empID) + ", '" + timestamp + "', " + str(pointDiff) + ", 'sub', '" + adID + "');"
+        try:
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("adUpdatePointHistory(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("adUpdatePointHistory(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+
+def spUpdatePointHistory(driver, empID, pointDiff, spID):
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Get the next open spot in Point_History
+        myid = 0
+        myCursor = mydb.cursor()
+        query = "SELECT ID FROM Point_History ORDER BY ID DESC LIMIT 1;"
+        try:
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for i in myResults:
+                myid = i[0] + 1
+        except Exception as e:
+            print("spUpdatePointHistory(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+
+        # Update the driver's point history
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+        myCursor = mydb.cursor()
+        query = "INSERT INTO Point_History (ID, Username, Employer_ID, Date_, Point_Cost, Type_Of_Change, Sponsor_ID) VALUES (" + str(myid) + ", '" + driver + "', " + str(empID) + ", '" + timestamp + "', " + str(pointDiff) + ", 'sub', '" + spID + "');"
+        try:
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("spUpdatePointHistory(): Failed to update database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("spUpdatePointHistory(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+
 def updatePointHistory(driver, empID, pointDiff):
     # Open connection
     try:
@@ -377,7 +459,7 @@ def sponsorCheckout(driver, empID, cartItems, sponsor):
         finally:
             myCursor.close()
 
-        updatePointHistory(driver, empID, totalSub)
+        spUpdatePointHistory(driver, empID, totalSub)
 
         # Alert the driver that the order was placed
         setOrderPlacedAlert(driver)
@@ -473,7 +555,7 @@ def adminCheckout(driver, empID, cartItems, admin):
         finally:
             myCursor.close()
 
-        updatePointHistory(driver, empID, totalSub)
+        adUpdatePointHistory(driver, empID, totalSub)
 
         # Alert the driver that the order was placed
         setOrderPlacedAlert(driver)
