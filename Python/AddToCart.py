@@ -459,7 +459,7 @@ def sponsorCheckout(driver, empID, cartItems, sponsor):
         finally:
             myCursor.close()
 
-        spUpdatePointHistory(driver, empID, totalSub)
+        spUpdatePointHistory(driver, empID, totalSub, sponsor)
 
         # Alert the driver that the order was placed
         setOrderPlacedAlert(driver)
@@ -555,7 +555,7 @@ def adminCheckout(driver, empID, cartItems, admin):
         finally:
             myCursor.close()
 
-        adUpdatePointHistory(driver, empID, totalSub)
+        adUpdatePointHistory(driver, empID, totalSub, admin)
 
         # Alert the driver that the order was placed
         setOrderPlacedAlert(driver)
