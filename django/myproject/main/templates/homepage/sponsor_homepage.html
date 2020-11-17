@@ -3,7 +3,16 @@
 	{% load static %}
 	<script type="text/javascript" src="{% static "main/home.js" %}"></script>
         <h1>Sponsor Home</h1>
-        <input type="button" id="logout" value="Logout">
+	{% if sponsorObj.first == "Dummy" %}
+		<form method="POST">
+                	{% csrf_token %}
+                	<label>---------------------------------------------------</label> <br>
+			<h3>Return to Normal view</h3>
+			<input type="submit" name="returntoview" value="Return"> <br>
+			<label>---------------------------------------------------</label>
+		</form>
+	{% endif %}
+	<input type="button" id="logout" value="Logout">
 {% endblock content %}
 
 {% block extraButtons %}

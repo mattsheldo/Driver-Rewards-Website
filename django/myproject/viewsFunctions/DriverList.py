@@ -144,3 +144,84 @@ def addTempUname(username):
     mydb.close()
 
 
+def addTempUnameSponsor(username):
+
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+
+    query = "UPDATE Sponsors SET Temp_Uname = '"+username+"' WHERE Username = 'dummysponsor';"
+    myCursor.execute(query)
+    myCursor.close()
+    mydb.commit()
+    mydb.close()
+
+
+
+def removeTempName(username):
+
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+
+    query = "UPDATE Drivers SET Temp_Uname = '' WHERE Username = 'dummydriver';"
+    myCursor.execute(query)
+    myCursor.close()
+    mydb.commit()
+    mydb.close()
+
+
+
+def getTempName(username):
+    name = ""
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+
+    query = "SELECT Temp_Uname FROM Drivers WHERE Username = '"+username+"';"
+    
+    myCursor.execute(query)
+    myResults = myCursor.fetchall()
+
+    name = myResults[0][0]
+
+    myCursor.close()
+    mydb.close()
+    return name
+
+
+def getTempNameSponsor(username):
+    name = ""
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+
+    query = "SELECT Temp_Uname FROM Sponsors WHERE Username = '"+username+"';"
+
+    myCursor.execute(query)
+    myResults = myCursor.fetchall()
+
+    name = myResults[0][0]
+
+    myCursor.close()
+    mydb.close()
+    return name
+
+
+

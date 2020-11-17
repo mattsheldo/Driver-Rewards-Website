@@ -211,3 +211,35 @@ def getSpCompany(sponsor):
     finally:
         mydb.close()
         return compID
+
+def getCompanySp(compID):
+    sponsor = ""
+
+    # Open connection
+    try:
+        mydb = mysql.connector.connect(
+            host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+
+        # Get a username from a sponsor
+        myCursor = mydb.cursor()
+        query = "SELECT Username FROM Sponsors WHERE Employer_ID = " + str(compID) + " LIMIT 1;"
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            myResults = myCursor.fetchall()
+
+            for i in myResults:
+                sponsor = i[0]
+        except Exception as e:
+            print("getCompanySp(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("getCompanySp(): Failed to connect: " + str(e))
+    finally:
+        mydb.close()
+        return sponsor

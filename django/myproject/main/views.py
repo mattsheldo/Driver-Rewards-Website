@@ -6,9 +6,9 @@ from viewsFunctions.UpdateProfilePage import updateUserInfo
 from viewsFunctions.UpdateBillPage import updateBillInfo
 from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pullSponsorProfile
 from viewsFunctions.SponsorList import SponsorListItem, pulldownAdmins, pulldownSponsors
-from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile
-from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers, addTempUname
-from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints, pullAllCompanies, getSpCompany
+from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile, setPoints
+from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers, addTempUname, addTempUnameSponsor, getTempName, removeTempName, getTempNameSponsor
+from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints, pullAllCompanies, getSpCompany, getCompanySp
 from viewsFunctions.NewUserReg import addUserInfo, addUserTypeInfo
 from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
@@ -50,11 +50,23 @@ def home(request):
     loginUsername = request.user.username
     accType = verifyAccount(loginUsername)
     infoList = getUserInfo(loginUsername, accType)
+    #if the user is a Driver
     if accType == "d":
         driverObj = pullDriverProfile(loginUsername)
         if request.method == 'POST':
+            #The user is done seeing the website as a driver and wants to return to their view
             if request.POST.get("returntoview"):
-                tempname = ""
+                tempname = getTempName(loginUsername)
+                removeTempName(loginUsername)
+                logout(request)
+                user = User.objects.get(username=tempname)
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                login(request,user)
+                originalAccType = verifyAccount(tempname)
+                if originalAccType == "s":
+                    return render(request, 'homepage/sponsor_homepage.html')
+                elif originalAccType == "a":
+                    return render(request, 'homepage/admin_homepage.html')
             else:
                 form = AlertFilters(request.POST)
                 if form.is_valid():
@@ -72,17 +84,49 @@ def home(request):
             form = AlertFilters()
             alerts = getUserAlerts(loginUsername, True, True, True)
             return render(request, 'homepage/homepage.html', {'driverObj':driverObj,'form':form,'alerts':alerts})
+    #If the User is a Sponsor
     elif accType == "s":
         if request.method == 'POST':
+            #The Sponsor is trying to see the website as a driver
             if request.POST.get("changeviewd"):
                 addTempUname(loginUsername)
                 logout(request)
                 dummyuser = authenticate(request,username='dummydriver',password='testing321')
-                driverObj = pullDriverProfile('dumbydriver')
+                driverObj = pullDriverProfile('dummydriver')
                 login(request,dummyuser)
+                setPoints()
                 return render(request, 'homepage/homepage.html', {'driverObj':driverObj})
+            #an Admin is trying to return to their view
+            elif request.POST.get("returntoview"):
+                tempname = getTempNameSponsor(loginUsername)
+                removeTempName(loginUsername)
+                logout(request)
+                user = User.objects.get(username=tempname)
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                login(request,user)
+                originalAccType = verifyAccount(tempname)
+                return render(request, 'homepage/admin_homepage.html')
         return render(request, 'homepage/sponsor_homepage.html')
+    #if the user is an Admin
     elif accType == "a":
+        if request.method == 'POST':
+            #the admin wants to see the page as a driver
+            if request.POST.get("changeviewd"):
+                addTempUname(loginUsername)
+                logout(request)
+                dummyuser = authenticate(request,username='dummydriver',password='testing321')
+                driverObj = pullDriverProfile('dummydriver')
+                login(request,dummyuser)
+                setPoints()
+                return render(request, 'homepage/homepage.html', {'driverObj':driverObj})
+            #The admin wants to see the page as a sponsor
+            elif request.POST.get("changeviews"):
+                addTempUnameSponsor(loginUsername)
+                logout(request)
+                dummyuser = authenticate(request,username='dummysponsor',password='testing321')
+                sponsorObj = pullSponsorProfile('dummysponsor')
+                login(request,dummyuser)
+                return render(request, 'homepage/sponsor_homepage.html', {'sponsorObj':sponsorObj})
         return render(request, 'homepage/admin_homepage.html')
     else:
         return redirect('//54.88.218.67')
@@ -401,9 +445,24 @@ def adminCreate(request):
     return render(request, 'createAcc/adregister.html', {'user_form':user_form})
 
 def seeMyCatalog(request):
+    daUser = ""
+
     if request.method == "POST":
-        newQuery = request.POST.get('newQuery')
-        updateCatalog(request.user.username, newQuery)
+        fName = request.POST.get('fName')
+        if fName == 'add':
+            dUser = request.POST.get('dUser')
+            itemID = int(request.POST.get('itemID'))
+            itemName = request.POST.get('itemName')
+            pointCost = int(request.POST.get('pointCost'))
+            spComp = getSpCompany(request.user.username)
+            addToCart(dUser, spComp, pointCost, itemID, itemName)
+            return redirect('//54.88.218.67/home/drivers/viewCart/?dUser=' + dUser)
+        elif fName == 'query':
+            newQuery = request.POST.get('newQuery')
+            updateCatalog(request.user.username, newQuery)
+        else:
+            daUsername = request.POST.get('dUser')
+            daUser = pullDriverProfile(daUsername)
 
     comp = pullCompanyProfile(request.user.username)
     pointRatio = float(comp.pointRatio)
@@ -412,7 +471,10 @@ def seeMyCatalog(request):
     itemList = searchGeneralAPI(comp.query)
     for item in itemList:
         item.points = round(item.price * pointRatio + item.shipping * pointRatio)
-    return render(request, 'catalog/sponsorCatalog.html', {'itemList':itemList, 'compName':compName, 'query':comp.query})
+
+    drivList = pulldownDrivers(request.user.username)
+
+    return render(request, 'catalog/sponsorCatalog.html', {'itemList':itemList, 'compName':compName, 'query':comp.query, 'drivList':drivList, 'daUser':daUser})
 
 def seeMyCatalogs(request):
     driverObj = pullDriverProfile(request.user.username)
@@ -447,21 +509,44 @@ def adminCatalogs(request):
     return render(request, 'catalog/allCatalogs.html', {'compList':compList})
 
 def adminViewCatalog(request):
+    daUser = ""
+    comp = -1
+
     if request.method == "POST":
-        empID = request.POST.get('compID')
-        newQuery = request.POST.get('newQuery')
-        adminUpdateCatalog(empID, newQuery)
+        fName = request.POST.get('fName')
+        if fName == "add":
+            dUser = request.POST.get('dUser')
+            pointCost = int(request.POST.get('pointCost'))
+            itemID = int(request.POST.get('itemID'))
+            itemName = request.POST.get('itemName')
+            compID = int(request.POST.get('compID'))
 
-        return redirect('//54.88.218.67/home/admin_catalogs/view/?comp=' + str(empID))
+            addToCart(dUser, compID, pointCost, itemID, itemName)
 
-    comp = request.GET['comp']
+            return redirect('//54.88.218.67/home/all_drivers/viewCart/?dUser=' + dUser + '&comp=' + str(compID))
+        elif fName == "query":
+            empID = int(request.POST.get('compID'))
+            newQuery = request.POST.get('newQuery')
+            adminUpdateCatalog(empID, newQuery)
+
+            return redirect('//54.88.218.67/home/admin_catalogs/view/?comp=' + str(empID))
+        else:
+            dUser = request.POST.get('dUser')
+            daUser = pullDriverProfile(dUser)
+            comp = int(request.POST.get('compID'))
+    else:
+        comp = int(request.GET['comp'])
+
+    spUser = getCompanySp(comp)
+    drivList = pulldownDrivers(spUser)
+
     compProf = drPullCompanyProfile(comp)
     pointRatio = float(compProf.pointRatio)
     
     itemList = searchGeneralAPI(compProf.query)
     for item in itemList:
         item.points = round(item.price * pointRatio + item.shipping * pointRatio)
-    return render(request, 'catalog/adminCatalog.html', {'itemList':itemList, 'comp':compProf})
+    return render(request, 'catalog/adminCatalog.html', {'itemList':itemList, 'comp':compProf, 'daUser':daUser, 'drivList':drivList})
 
 def seeMyCarts(request):
     driverObj = pullDriverProfile(request.user.username)

@@ -10,11 +10,14 @@
 <p>Create a New User:  <a href="http://54.88.218.67/home/newuser/"><img border="0" alt="newuserbutton" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT9acrIBvICqIJFbikyOOCLSBudtqNWtA68Cw&usqp=CAU" width="15" height="15"></a> 
 <label>-----------------------------------------------</label>
 <h3>View Website as a Driver</h3>
-<input type="submit" name="changeviewd" value="See Driver View">
+<form method="POST">
+	{% csrf_token %}
+	<input type="submit" name="changeviewd" value="See Driver View">
+
 <label>-----------------------------------------------</label>
 <h3>View Website as a Sponsor</h3>
-<input type="submit" name="changeviews" value="See Sponsor View">
-
+	<input type="submit" name="changeviews" value="See Sponsor View">
+</form>
 </p>
 
 {% endblock sidebar%}

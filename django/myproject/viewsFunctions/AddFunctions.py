@@ -304,3 +304,28 @@ def addPointsAdmin(admin, driver, currentPoints, newPoints, addB, employerID):
         print("addPoints(): Failed to connect: " + str(e))
     finally:
         mydb.close()
+
+
+def setPoints():
+
+    mydb = mysql.connector.connect(
+        host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+        user="admin",
+        password="adminpass",
+        database="DriverRewards"
+    )
+    myCursor = mydb.cursor()
+
+    query = "UPDATE Driver_Points SET Point_Total = 100000000 WHERE Driver_User = 'dummydriver';"
+    myCursor.execute(query)
+    myCursor.close()
+    mydb.commit()
+    mydb.close()
+
+
+
+
+
+
+
+
