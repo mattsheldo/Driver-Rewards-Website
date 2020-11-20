@@ -19,6 +19,33 @@ class DriverProfile:
         self.phone = phone
         self.address = address
 
+def removeComp(username, empID):
+ # Open connection
+    try:
+        mydb = mysql.connector.connect(
+	    host="cpsc4910group1rds.cwlgcbjw7kmo.us-east-1.rds.amazonaws.com",
+            user="admin",
+            password="adminpass",
+            database="DriverRewards"
+        )
+        # Look for all info for this driver
+        myCursor = mydb.cursor()
+        query = "DELETE FROM Driver_Points WHERE Driver_User = '"+username+"' AND Employer_ID = "+str(empID)+";"
+
+        try:
+            # Execute query and get results
+            myCursor.execute(query)
+            mydb.commit()
+        except Exception as e:
+            print("removeComp(): Failed to query database: " + str(e))
+        finally:
+            myCursor.close()
+    except Exception as e:
+        print("removeComp(): Failed to query database: " + str(e))
+    finally:
+        mydb.close()
+ 
+
 def pullDriverProfile(username):
     profileObj = DriverProfile("", "", "", [], "", "", "", "")
 

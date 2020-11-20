@@ -8,7 +8,7 @@ class DriverListItem:
         self.pointTotal = pointTotal
         self.user = user
         self.pointsObj = pointsObj
-
+    
 def pulldownDrivers(sponsor):
     driverNames = []
 

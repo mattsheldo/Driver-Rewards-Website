@@ -6,7 +6,7 @@ from viewsFunctions.UpdateProfilePage import updateUserInfo
 from viewsFunctions.UpdateBillPage import updateBillInfo
 from viewsFunctions.SponsorProfile import SponsorProfile, pullAdminProfile, pullSponsorProfile
 from viewsFunctions.SponsorList import SponsorListItem, pulldownAdmins, pulldownSponsors
-from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile, setPoints
+from viewsFunctions.AddFunctions import DriverPoints, DriverProfile, removeComp, pullDriverProfile, addPoints, addPointsAdmin, spPullDriverProfile, setPoints
 from viewsFunctions.DriverList import DriverListItem, pulldownDrivers, adminPulldownDrivers, pullPendingDrivers, addTempUname, addTempUnameSponsor, getTempName, removeTempName, getTempNameSponsor
 from viewsFunctions.PointsPerDollar import UpdatePVal, getID, pullCompanyProfile, drPullCompanyProfile, getPoints, pullAllCompanies, getSpCompany, getCompanySp
 from viewsFunctions.NewUserReg import addUserInfo, addUserTypeInfo
@@ -136,12 +136,18 @@ def viewMyDrivers(request):
         sponsorUser = request.user.username
         driverUser = request.POST.get("username")
         currPoints = int(request.POST.get("point"))
-        nextPoints = int(request.POST.get("pointInput"))
+        comp = getSpCompany(request.user.username)
+
+        #Call this to remove Sponsorship
+        if request.POST.get("revokeBut"):
+            removeComp(driverUser, comp)
         # Call this if it's an add
-        if request.POST.get("addBut"):
+        elif request.POST.get("addBut"):
+            nextPoints = int(request.POST.get("pointInput"))
             addPoints(sponsorUser, driverUser, currPoints, nextPoints, True)
         # Call this if it's a remove
         else:
+            nextPoints = int(request.POST.get("pointInput"))
             addPoints(sponsorUser, driverUser, currPoints, nextPoints, False)
         return redirect('//54.88.218.67/home/drivers/')
     else:
@@ -205,8 +211,14 @@ def viewDriverProfile(request):
     return render(request, 'profile/view_driver.html', {'driverObj':driverObj})
 
 def adviewDriverProfile(request):
-    uname = request.GET['uname']
-    driverObj = pullDriverProfile(uname)
+    if request.method == "GET":
+        uname = request.GET['uname']
+        driverObj = pullDriverProfile(uname)
+    if request.POST.get("compID"):
+        empID = request.POST.get("compID")
+        uname = request.POST.get("username")
+        removeComp(uname, empID)
+        driverObj = pullDriverProfile(uname)
     return render(request, 'profile/admin_view_driver.html', {'driverObj':driverObj})
 
 def adviewSponsorProfile(request):
@@ -287,12 +299,16 @@ def viewMyCompanies(request):
     return render(request, 'pointValue/viewComps.html', {'driverObj':driverObj})
 
 def viewACompany(request):
-    empID = request.GET["comp"]
-    driverUser = request.user.username
-    companyProf = drPullCompanyProfile(empID)
-    dPoints = getPoints(request.user.username, empID)
-    if request.POST.get("resign"):
-        removeComp(driverUser, empID)
+    if request.method == "GET":
+        empID = request.GET["comp"]
+        driverUser = request.user.username
+        companyProf = drPullCompanyProfile(empID)
+        dPoints = getPoints(request.user.username, empID)
+    else:
+        driverUser = request.user.username
+        comp = request.POST.get("compID")
+        removeComp(driverUser, comp)
+        return redirect('//54.88.218.67/home/companies/')
     return render(request, 'pointValue/compProfile.html', {'companyProf':companyProf, 'dPoints':dPoints})
 
 def updateMyPersonalInfo(request):

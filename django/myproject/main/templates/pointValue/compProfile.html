@@ -3,7 +3,11 @@
   <h1>{{ companyProf.name }}</h1>
   <p>Point Ratio: {{ companyProf.pointRatio }} Points/USD</p>
   <p>My Points: {{ dPoints }}</p>
-  <input type="submit" value="Resign" name="resign">	
+<form method="POST", action="/home/companies/profile/">
+		{% csrf_token %}
+  <input type="hidden" value="{{companyProf.cid}}" name="compID">		
+  <input type="submit" value="Resign" name="resign">
+</form>
 {% endblock content %}
 
 {% block sidebar %}
