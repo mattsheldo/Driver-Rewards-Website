@@ -64,7 +64,7 @@ def getSalesBySponsor(compID, monthInt, year):
                 # Divide the point cost by the point/dollar ratio to get cost in USD
                 itemCost = round(item[1] / item[2], 2)
                 # Just take the "Date" part of the Datetime obj, no need for the full timestamp
-                itemDate = str(item[3])[0:10]               
+                itemDate = str(item[3])[0:10].replace("-", "/")
                 report.append(ReportItem(itemName, itemCost, itemDate))
         except Exception as e:
             print("getSalesBySponsor(): Failed to query database: " + str(e))
