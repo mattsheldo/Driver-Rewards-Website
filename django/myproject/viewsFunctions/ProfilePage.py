@@ -90,6 +90,13 @@ def getUserAlerts(username, pc, oc, oi):
         myResults = myCursor.fetchall()
         for i in myResults:
             messages.append(Message(i[0],i[1]))
+
+    # Always get the required alerts
+    query4 = "SELECT Message_, ID FROM Driver_Alerts WHERE Username = '"+username+"' AND Type_ IN ('ac', 'rm');"
+    myCursor.execute(query4)
+    myResults = myCursor.fetchall()
+    for i in myResults:
+        messages.append(Message(i[0],i[1]))
     
     myCursor.close()
     mydb.close()
