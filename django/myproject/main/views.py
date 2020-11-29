@@ -13,8 +13,10 @@ from viewsFunctions.NewUserReg import addUserInfo, addUserTypeInfo
 from viewsFunctions.Account import verifyAccount
 from viewsFunctions.CreateCompany import createCompany, joinCompany
 from viewsFunctions.FindCompany import applyToCompany
-from viewsFunctions.ApproveDriver import approveDriver
+from viewsFunctions.ApproveDriver import approveDriver, sendRemoveMessage
 from viewsFunctions.AddToCart import addToCart, pulldownCart, removeFromCart, driverCheckout, sponsorCheckout, adminCheckout, getOutstandingPurchases, spGetOutstandingPurchases, cancelPurchase
+from viewsFunctions.AdminReports import getDriverPurchaseHistory, listEmployers
+from viewsFunctions.Reports import getSalesBySponsor, getSalesOverTime
 from SponsorCatalog import searchGeneralAPI, updateCatalog, adminUpdateCatalog
 from .forms import UserForm, UpdateForm, UpdatePass, UnameForm, AlertFilters
 from django.contrib.auth.models import User
@@ -106,7 +108,8 @@ def home(request):
                 login(request,user)
                 originalAccType = verifyAccount(tempname)
                 return render(request, 'homepage/admin_homepage.html')
-        return render(request, 'homepage/sponsor_homepage.html')
+        sponsorObj = pullSponsorProfile(loginUsername)
+        return render(request, 'homepage/sponsor_homepage.html', {'sponsorObj':sponsorObj})
     #if the user is an Admin
     elif accType == "a":
         if request.method == 'POST':
@@ -141,6 +144,7 @@ def viewMyDrivers(request):
         #Call this to remove Sponsorship
         if request.POST.get("revokeBut"):
             removeComp(driverUser, comp)
+            sendRemoveMessage(driverUser)
         # Call this if it's an add
         elif request.POST.get("addBut"):
             nextPoints = int(request.POST.get("pointInput"))
@@ -162,6 +166,8 @@ def viewAllDrivers(request):
         currPoints = int(request.POST.get("point"))
         nextPoints = int(request.POST.get("pointInput"))
         empID = int(request.POST.get("emp"))
+        #if request.POST.get("RevokeBut"):
+        #    sendRemoveMessage(driverUser)
         if request.POST.get("addBut"):
             addPointsAdmin(adminUser, driverUser, currPoints, nextPoints, True, empID)
         else:
@@ -486,7 +492,7 @@ def seeMyCatalog(request):
 
     itemList = searchGeneralAPI(comp.query)
     for item in itemList:
-        item.points = round(item.price * pointRatio + item.shipping * pointRatio)
+        item.points = round(item.price * 1.01 * pointRatio)
 
     drivList = pulldownDrivers(request.user.username)
 
@@ -517,7 +523,7 @@ def seeThisCatalog(request):
 
         itemList = searchGeneralAPI(compProfile.query)
         for item in itemList:
-            item.points = round(item.price * pointRatio + item.shipping * pointRatio)
+            item.points = round(item.price * 1.01 * pointRatio)
         return render(request, 'catalog/driverCatalog.html', {'itemList':itemList, 'compProf':compProfile, 'drivPoints':drivPoints})
 
 def adminCatalogs(request):
@@ -561,7 +567,7 @@ def adminViewCatalog(request):
     
     itemList = searchGeneralAPI(compProf.query)
     for item in itemList:
-        item.points = round(item.price * pointRatio + item.shipping * pointRatio)
+        item.points = round(item.price * 1.01 * pointRatio)
     return render(request, 'catalog/adminCatalog.html', {'itemList':itemList, 'comp':compProf, 'daUser':daUser, 'drivList':drivList})
 
 def seeMyCarts(request):
@@ -790,3 +796,117 @@ def resetP(request):
     else:
         form = SetPasswordForm(user=request.user)
     return render(request, 'login/preset.html', {'form':form})
+
+def reportsHome(request):
+    return render(request, 'reports/reportHome.html')
+
+def reportsOverTime(request):
+    if request.method == "POST":
+        monthID = int(request.POST.get('month'))
+        year = int(request.POST.get('year'))
+
+        # Get report data
+        reportData = getSalesOverTime(monthID, year)
+        companyList = pullAllCompanies()
+
+        # Get total cost and revenue
+        totalCost = 0.0
+        for i in reportData:
+            totalCost += float(i.cost)
+        totalRev = "{:.2f}".format(round(0.01 * totalCost, 2))
+        totalCost = "{:.2f}".format(totalCost)
+
+        # Get month spelled out
+        month = ""
+        if monthID == 1:
+            month = "January"
+        elif monthID == 2:
+            month = "February"
+        elif monthID == 3:
+            month = "March"
+        elif monthID == 4:
+            month = "April"
+        elif monthID == 5:
+            month = "May"
+        elif monthID == 6:
+            month = "June"
+        elif monthID == 7:
+            month = "July"
+        elif monthID == 8:
+            month = "August"
+        elif monthID == 9:
+            month = "September"
+        elif monthID == 10:
+            month = "October"
+        elif monthID == 11:
+            month = "November"
+        elif monthID == 12:
+            month = "December"
+
+        return render(request, 'reports/salesOverTime.html', {'companies':companyList, 'reportData':reportData, 'month':month, 'year':year, 'allSales':totalCost, 'rev':totalRev})
+
+    companyList = pullAllCompanies()
+
+    return render(request, 'reports/salesOverTime.html', {'companies':companyList})
+
+
+def reportsSponsor(request):
+    if request.method == "POST":
+        monthID = int(request.POST.get('month'))
+        year = int(request.POST.get('year'))
+        compID = int(request.POST.get('comp'))
+        compName = request.POST.get(str(compID))
+
+        # Get report data
+        reportData = getSalesBySponsor(compID, monthID, year)
+        companyList = pullAllCompanies()
+
+        # Get total cost and revenue
+        totalCost = 0.0
+        for i in reportData:
+            totalCost += float(i.cost)
+        totalRev = "{:.2f}".format(round(0.01 * totalCost, 2))
+        totalCost = "{:.2f}".format(totalCost)
+
+        # Get month spelled out
+        month = ""
+        if monthID == 1:
+            month = "January"
+        elif monthID == 2:
+            month = "February"
+        elif monthID == 3:
+            month = "March"
+        elif monthID == 4:
+            month = "April"
+        elif monthID == 5:
+            month = "May"
+        elif monthID == 6:
+            month = "June"
+        elif monthID == 7:
+            month = "July"
+        elif monthID == 8:
+            month = "August"
+        elif monthID == 9:
+            month = "September"
+        elif monthID == 10:
+            month = "October"
+        elif monthID == 11:
+            month = "November"
+        elif monthID == 12:
+            month = "December"
+
+        return render(request, 'reports/salesBySponsor.html', {'companies':companyList, 'reportData':reportData, 'compName':compName, 'month':month, 'year':year, 'allSales':totalCost, 'rev':totalRev})
+
+    companyList = pullAllCompanies()
+
+    return render(request, 'reports/salesBySponsor.html', {'companies':companyList})
+
+
+
+def reportsDriverPurchases(request):
+    employers = []
+    employers = listEmployers()
+    summary = []
+    for i in employers:
+        summary.append(getDriverPurchaseHistory(i.ID))
+    return render(request, 'reports/driverPurchases.html',{'summary':summary})

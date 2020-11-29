@@ -9,9 +9,11 @@
                 	<label>---------------------------------------------------</label> <br>
 			<h3>Return to Normal view</h3>
 			<input type="submit" name="returntoview" value="Return"> <br>
+			<input type="hidden" name={{sponsorObj.last}}>
 			<label>---------------------------------------------------</label>
 		</form>
 	{% endif %}
+	<input type="hidden" name={{sponsorObj.last}}>
 	<input type="button" id="logout" value="Logout">
 {% endblock content %}
 

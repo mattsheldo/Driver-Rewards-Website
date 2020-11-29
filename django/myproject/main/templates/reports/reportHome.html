@@ -1,13 +1,10 @@
 {% extends "driverRewards/basic.html" %}
 {% block content %}
-  <h1>Admin List</h1>
-  <p>List of all admins</p>
-  <div id="dList">
-  {% for admin in adminList %}
-  	<a href="//54.88.218.67/home/all_admins/viewProfile/?uname={{ admin.user }}" style="color: black;">{{ admin.last }}, {{ admin.first }}</a>
+	<h1>Reports</h1>
 	<br>
-  {% endfor %}
-  </div>
+	<div><a href="//54.88.218.67/home/reports/salesOverTime/" style="color: black;">Sales Over Time</a></div>
+	<div><a href="//54.88.218.67/home/reports/sponsorSales/" style="color: black;">Sales by Sponsor</a></div>
+	<div><a href="//54.88.218.67/home/reports/driverPurchases/" style="color: black;">Purchases by Driver</a></div>
 {% endblock content %}
 
 {% block extraButtons %}

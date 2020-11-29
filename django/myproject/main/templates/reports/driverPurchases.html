@@ -1,0 +1,36 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+        <h1>Driver Purchases by Sponsor</h1>
+	<p>
+		{% for j in summary %}
+			<h3>{{j.0.companyName}}</h3>
+			------------------------------------------------------------------------------- <br>
+			{% for i in j %}
+			<label>
+				<b>Order ID:</b> {{i.ID}} <br>
+				<b>Driver Username:</b> {{i.username}} <br>
+				<b>Employer ID:</b> {{i.employerID}} <br>
+				<b>Date of Purchase:</b> {{i.datePurchased}} <br>
+				<b>Point Total:</b> {{i.PointTotal}} <br>
+				<b>Product Name:</b> {{i.ProductName}} <br>
+				{% if i.SponsorID != ""%}
+					<b>Purchased by Sponsor:</b> {{i.SponsorID}} <br>
+				{% endif %}
+				{% if i.AdminID != ""%}
+					<b>Purchased by Admin:</b> {{i.AdminID}} <br>
+				{% endif %}
+				<b>Product ID:</b> {{i.ProductID}} <br>
+				------------------------------------------------------------------------------- <br>
+			</label> <br>
+			{% endfor %}
+		{% endfor %}
+	</p>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+        <a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+        <a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+        <a class="nav-item nav-link" href="/home/admin_catalogs/">Catalogs</a>
+        <a class="nav-item nav-link" href="/home/reports/">Reports</a>
+{% endblock extraButtons %}
