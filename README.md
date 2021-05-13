@@ -18,13 +18,16 @@ The drivers are not given cash as their reward they are given points that can be
 Sponsors also control the items on the company catalog so that drivers can not buy any item they want. There are filters that sponsors can use but the main way we control what items are on the catalog is by keyword. The sponsors use keywords to find items they want on the catalog and we use the eBay API to find items matching the keyword(s). If a specific item is not one a sponsor likes that sponsor can go in and remove specific items. All users can see the compnay catalog but only sponsors and admins can edit the catalog. If necessary sponsors and admins have the ability to purchase items for specific drivers.
 
 ### Point and Purchase Histories
-
+Users have the ability to view their purchase history at anytime to see which items from the catalog they have purchased as well as information about the item they purchased. If they user has purchased the item recently there is an option to cancel the purcahse which will refund the user their points and remove the item. Similarly there is also a points history page. This allows users to keep track of there earned points, removed points, and point purchases as well as information such as when the points were given or taken and which sponsor or admin gave or took away the drivers points. This allows all users to be confident that they are being treated fairly.
 
 ### View as Another User
+Because different users have different interfaces due to their privelege levels we gave sponsors and admins the ability to view pages from a different users perspective. Of course this is only an option for view a user of lower privilege so that sponsors are unable to see admin pages. When viewing the website as another users sponsors and admins are able to do everything that a user of that type is able to do and they are given unlimited dummy points so that they can test out any features to their hearts content.
 
 ### Automated Messages
+Anytime a user completes a task they are given feedback on their homepage in the form of messages. Users can filter and delete messages if they want to decluyter but the messages do not go away until the user chooses to remove them. Some examples of messages are confirmation messages that lets a user know that something was done succesfully. For example a sponsor has added you to their company, that you successfully purchased an item, that you succesffully canceled an item. that you changed your account information, etc. There are also error messages such as unable to purchase product, could not update account, etc. Finally there are messages that keep you updated about changes to your account by others. This could include account information being changed, points being updated, products being purchased, sponsors removing you from the company, etc.
 
 ### Admin Reports
+Finally we implemented automated monthly reports that are sent to admins for each company that summarize all purchase information of that month so that admins and sponsors can get a better sense of how the drivers are responding to the website.
 
 ## Want to Know More?
 This project was organized user Azure DevOps. If you would like to see our users stories, progress metrics, or just more information on the project reach out to me at sheldonmatt517@gmail.com and I can send you an invite to the DevOps project.
