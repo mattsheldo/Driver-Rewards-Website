@@ -1,0 +1,39 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  {% load static %}
+  <script type="text/javascript" src="{% static "main/login.js" %}"></script>
+  <h1>Login</h1>
+  <form method="POST" action"">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" name="create User" value="Login">
+  </form>
+  <input type="button" id="register" value="Register"> <br>
+  <a href="http://54.88.218.67/reset/">Click Here to Reset Password</a>
+{% endblock content %}
+
+<!--<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>TDR Login</title>
+  <meta name="description" content="Login page for Truck Driver Rewards (TDR)">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  {% load static %}
+  <script type="text/javascript" src="{% static "main/login.js" %}"></script>
+  <style type="text/css" src="{% static "login.css" %}"></style>
+</head>
+
+<body>
+  <h1>Login</h1>
+  <form method="POST" action"">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" name="create User" value="Login">
+  </form>
+  <input type="button" id="register" value="Register">
+</body>
+
+</html>

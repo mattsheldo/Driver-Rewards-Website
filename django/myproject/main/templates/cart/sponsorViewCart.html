@@ -1,0 +1,40 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	<h1>{{ comp.name }} Shopping Cart</h1>
+	<br>
+	<h4>Total Cost: <strong>{{ totalPoints }}</strong> points</h4>
+        {% if totalPoints <= drivPoints and totalPoints > 0 %}
+                <input type="button" onclick="location.href='//54.88.218.67/home/drivers/viewCart/confirm/?dUser={{ dUser }}';" value="Go to Checkout" />
+                <br>
+        {% elif totalPoints == 0 %}
+                <p>There are no items in this cart to checkout</p>
+        {% else %}
+                <p>Sorry, you do not currently have enough points to checkout with this cart</p>
+        {% endif %}
+	<br>
+	{% for item in itemList %}
+	<div>
+		<strong>{{ item.name }}</strong>
+		<br>
+		{{ item.pointCost }} points
+		<form method="POST" action="/home/drivers/viewCart/">
+                        {% csrf_token %}
+                        <input type="submit" value="Remove">
+                        <input type="hidden" value="{{ item.dbid }}" name="itemID">
+			<input type="hidden" value="{{ comp.cid }}" name="compID">
+			<input type="hidden" name="dUser" value="{{ dUser }}">
+                </form>
+	</div>
+	<br>
+	{% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+	<p>{{ dProf.first }} {{ dProf.last }}'s Points: <strong>{{ drivPoints }}</strong></p>
+{% endblock sidebar %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+        <a class="nav-item nav-link" href="/home/point_value/">My Company</a>
+        <a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
+{% endblock extraButtons %}

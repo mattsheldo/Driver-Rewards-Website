@@ -1,0 +1,23 @@
+{% extends "driverRewards/basic.html"%}
+{% block content %}
+	<h1>{{ sponsorObj.first }} {{ sponsorObj.last }}'s Profile</h1>
+	<p>Username: {{ sponsorObj.user }}</p>
+	<p>First Name: {{ sponsorObj.first }}</p>
+	<p>Last Name: {{ sponsorObj.last }}</p>
+	<p>Preferred Name: {{ sponsorObj.prefName }}</p>
+	<p>Email Address: {{ sponsorObj.email }}</p>
+	<p>Phone Number: {{ sponsorObj.phone }}</p>
+	<p>Address: {{ sponsorObj.address }}</p>
+	<a href="//54.88.218.67/home/all_sponsors/viewProfile/edit/?uname={{ sponsorObj.user }}">Click Here to Edit Sponsor's Personal Info</a> <br>
+	<a href="//54.88.218.67/home/all_sponsors/viewProfile/edit/bill/?uname={{ sponsorObj.user }}">Click Here to Edit Sponsor's Bill Info</a> <br>
+
+	<a href="//54.88.218.67/home/all_sponsors/viewProfile/edit/pass/?uname={{ sponsorObj.user }}">Click Here to Change Sponsor's Password</a>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+	<a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+	<a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+	<a class="nav-item nav-link" href="/home/admin_catalogs/">Catalogs</a>
+	<a class="nav-item nav-link" href="/home/reports/">Reports</a>
+{% endblock extraButtons %}

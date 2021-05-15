@@ -1,0 +1,33 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  <h1>{{ companyProf.name }}</h1>
+  <p>Point Ratio: {{ companyProf.pointRatio }} Points/USD</p>
+  <form method="POST" action"/home/point_value/">
+     {% csrf_token %}
+        <input type="number" step="0.01" name="pointVal" id="pointValID">
+        <input type="submit" value="Submit" id="DollarValue" name="Dollars">
+  </form>
+  <br>
+  <h4>Pending Employee Applications</h4>
+  <div>
+  {% for driver in driverList %}
+	  <form method="POST" action="/home/point_value/">
+		{% csrf_token %}
+		<label>{{ driver.last }}, {{ driver.first }}: &nbsp;</label>
+		<input type="submit" value="Accept" name="accept">
+		<input type="submit" value="Reject" name="reject">
+		<input type="hidden" value="{{ driver.user }}" name="dUser">
+	  </form>
+  {% endfor %}
+  </div>
+{% endblock content %}
+
+{% block sidebar %}
+        <p>Join Code: <strong>{{ companyProf.code }}</strong></p>
+{% endblock sidebar%}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+        <a class="nav-item nav-link" href="/home/point_value/">My Company</a>
+	<a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
+{% endblock extraButtons %}

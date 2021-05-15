@@ -1,0 +1,18 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  <h1>My Catalogs</h1>
+  {% for c in comps %}
+  	<a href="//54.88.218.67/home/catalogs/view/?comp={{ c.employer }}" style="color: black;">{{ c.employerName }}</a>
+	<br>
+  {% endfor %}
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/companies/">Companies</a>
+	<a class="nav-item nav-link" href="/home/catalogs/">Catalogs</a>
+{% endblock extraButtons %}
+
+{% block rightButtons %}
+	<a class="nav-item nav-link" href="/home/purchases/">My Purchases</a>
+        <a class="nav-item nav-link" href="/home/cart_list/">My Carts</a>
+{% endblock rightButtons %}

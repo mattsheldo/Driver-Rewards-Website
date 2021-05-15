@@ -1,0 +1,29 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  <h1>My Companies</h1>
+  {% for p in driverObj.pointObjs %}
+  	<a href="//54.88.218.67/home/companies/profile/?comp={{ p.employer }}" style="color: black;">{{ p.employerName }}: {{ p.pointTotal }} points</a>
+	<br>
+  {% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+	<form method="POST" action"home/companies/">
+        {% csrf_token %}
+        <div>
+                <h2>Join a Company</h2>
+                <label>Join Code: &nbsp;</label>
+                <input type="number" name="compCode">
+                <input type="submit" value="Apply" name="apply">
+        </div>
+  </form>
+{% endblock sidebar %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/companies/">Companies</a>
+	<a class="nav-item nav-link" href="/home/catalogs/">Catalogs</a>
+{% endblock extraButtons %}
+
+{% block rightButtons %}
+	<a class="nav-item nav-link" href="/home/purchases/">My Purchases</a>
+        <a class="nav-item nav-link" href="/home/cart_list/">My Carts</a>                                   {% endblock rightButtons %}

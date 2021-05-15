@@ -1,0 +1,11 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  {% load static %}
+  <h1>Password Reset</h1>
+  <form method="POST" action"">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" name="resetp" value="Update">
+  </form>
+{% endblock content %}
+

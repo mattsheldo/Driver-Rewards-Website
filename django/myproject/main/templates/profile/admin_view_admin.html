@@ -1,0 +1,21 @@
+{% extends "driverRewards/basic.html"%}
+{% block content %}
+	<h1>{{ adminObj.first }} {{ adminObj.last }}'s Profile</h1>
+	<p>Username: {{ adminObj.user }}</p>
+	<p>First Name: {{ adminObj.first }}</p>
+	<p>Last Name: {{ adminObj.last }}</p>
+	<p>Preferred Name: {{ adminObj.prefName }}</p>
+	<p>Email Address: {{ adminObj.email }}</p>
+	<p>Phone Number: {{ adminObj.phone }}</p>
+	<p>Address: {{ adminObj.address }}</p>
+	<a href="//54.88.218.67/home/all_admins/viewProfile/edit/?uname={{ adminObj.user }}">Click Here to Edit Admin's Personal Info</a> <br>
+	<a href="//54.88.218.67/home/all_admins/viewProfile/edit/pass/?uname={{ adminObj.user }}">Click Here to Change Admin's Password</a>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+	<a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+	<a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+	<a class="nav-item nav-link" href="/home/admin_catalogs/">Catalogs</a>
+	<a class="nav-item nav-link" href="/home/reports/">Reports</a>
+{% endblock extraButtons %}

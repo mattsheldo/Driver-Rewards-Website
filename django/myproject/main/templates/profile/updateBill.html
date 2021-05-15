@@ -1,0 +1,11 @@
+{% extends "driverRewards/basic.html"%}
+{% block content %}
+	<h1>{{ sponsorObj.first }} {{ sponsorObj.last }}'s Profile</h1>
+	<p>Month End Date: {{ sponsorObj.user }}</p>
+	<p>Total: {{ sponsorObj.first }}</p>
+	<p>Paid: {{ sponsorObj.last }}</p>
+	<p>Preferred Name: {{ sponsorObj.prefName }}</p>
+	<p>Email Address: {{ sponsorObj.email }}</p>
+	<p>Phone Number: {{ sponsorObj.phone }}</p>
+	<p>Address: {{ sponsorObj.address }}</p>
+	{% endblock content %}	

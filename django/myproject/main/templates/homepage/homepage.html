@@ -1,0 +1,55 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	{% load static %}
+	<script type="text/javascript" src="{% static "main/home.js" %}"></script>
+        <h1>Driver Home</h1>
+	{% if driverObj.first == "Dummy" %}
+		<form method="POST">
+			{% csrf_token %}
+			<label>---------------------------------------------------</label> <br>
+			<h3>Return to Normal view</h3>
+			<input type="submit" name="returntoview" value="Return"> <br>
+			<label>---------------------------------------------------</label>
+		</form>
+	{% endif %}
+        <input type="button" id="logout" value="Logout">
+{% endblock content %}
+
+{% block sidebar %}
+        <h3>{{ driverObj.first }} {{ driverObj.last }}'s Points:</h3>
+        {% for entry in driverObj.pointObjs %}
+                <p>{{ entry.employerName }}: {{ entry.pointTotal }}</p>
+        {% endfor %}
+	<p>--------------------------------</p>	
+	<h4>Notifications:</h4>
+	<p>--------------------------------</p>
+	<form method="POST">
+        	{% csrf_token %}
+        	{{form.as_p}}
+        	<div>
+			<input type="submit" name="filter" value="Apply Filter"> <br>
+        	</div>
+		<div style="height:250px;width:300px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+			<p>----------------------------------------------</p>
+			{% for entry in alerts %} 
+			<p>
+				{{entry.message}}
+				<input type="hidden" name="msgid", value="{{entry.msgid}}">
+				<input type="submit" name="{{entry.msgid}}", value="X", style="background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEX///8AAADS0tJiYmIiIiL8/PxaWlrz8/Ph4eHY2NgSEhLb29s9PT3Nzc3GxsY0NDRpaWmysrKYmJg3Nzepqans7OyCgoKcnJwqKipISEjp6em5ubl5eXkbGxuJiYnAwMAUFBRHR0dxcXFQUFCFhYWjo6Pqz9tCAAAC90lEQVR4nO3a23KqMBiGYUED7hXctSpqtb3/W1xrdan5LBtPGOzPvM+hTWeSgXz5Q9LpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3hBuFd/0nbWNpuG+ldLdan3s1sV9nS7bNby2w8aah7dYiCu9m0op07+IbDpLHu1cCNfc8vo/JmX75ZkDbYvxqMFr7r51VZq13Pt9o32b06HN985z9L2oTypOdxo92rgVsOn72Aq4tvET3L3F9IQyQoDJGu//uiKo5+rfgsgVqwEOytxqi3kjXjPfcWpvKIN6/oXh1GH5IkPwqWRGK0LIkMmGZ+GOuHsJzo4M3FqFjqq+j87315gT8MlaMFZLadfJzEc/9zFr6wezWI134svXugSowGx1d2rw5beVxv1wmnMbp8bffqMHiXKfc9FY8ywNQ9+38DpjOJzb8DCqWc25cW5aYksmYcXF/WCYvVaKGNTMVU5uXC0qa+kpNAVeZj1IujogG2IEa9/iI/wEMbYtTTAL3GquVqtMjx9DjAi+1qtMgy0wGOB6/uT/1W8tEimLUoRu92M32ErVkJvclYX9L2VDN3Wqt9K/9MbJPLL/mt2FV489wAW1bSbAoGGAQtSpudH1VPEnVYfihlzEQOadZTOay4tCRQB3oAs+1M5Cm2I1AfPkX9e2jyzg7TFpTfsR5B/S9G5VOb1SMZ8XCOfbu0oBWqyWM1Ja+knJPKzMyMbzJCGeDez7mtfkM1vVHsyzrR1ZFoHX42XL5tZcJdHt5Gl8jYjV0zEXoq8/PekEv9h5uh2QpVqtH8IJyc8r8Z3fEnkjKH/J+dpo3JM0Q94e4WNYhlKlrc8g/0ZltxWoZ658tc+aZf1vI3Ta4S+YZqLlAlR8rvOzndGRsLVCmus2X5ih5/yhBNVah6a6/yAEa3VmNDW/6jbnKra7KRrBmRmf2wXhuNnmWkbvmtHEfFm6h793ydS3zjqPrWOwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDJHwPGGzyBnJqYAAAAAElFTkSuQmCC); width:30px;height:30px;">
+
+			</p>
+			
+			<p>----------------------------------------------</p>
+	   		{% endfor %}
+		</div>
+	</form>
+{% endblock sidebar%}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/companies/">Companies</a>
+	<a class="nav-item nav-link" href="/home/catalogs/">Catalogs</a>
+{% endblock extraButtons %}
+
+{% block rightButtons %}
+	<a class="nav-item nav-link" href="/home/purchases/">My Purchases</a>
+        <a class="nav-item nav-link" href="/home/cart_list/">My Carts</a>                                   {% endblock rightButtons %}

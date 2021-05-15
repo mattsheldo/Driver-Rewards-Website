@@ -1,0 +1,56 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	<h1>{{ compName }} Catalog ({{ daUser.last }}, {{ daUser.first }})</h1>
+	<div>Powered by eBay</div>
+	<br>
+	{% for item in itemList %}
+	<div>
+		<a href="{{ item.itemURL }}" target="_blank" style="color: black;"><strong>{{ item.name }}</strong></a>
+		<br>
+		{{ item.points }} points
+		{% if daUser != "" %}
+			<form method="POST" action="/home/catalog/">
+				{% csrf_token %}
+				<input type="submit" value="Add to Cart">
+				<input type="hidden" name="dUser" value="{{ daUser.user }}">
+                        	<input type="hidden" name="pointCost" value="{{ item.points }}">
+                        	<input type="hidden" name="itemID" value="{{ item.itemID }}">
+                        	<input type="hidden" name="itemName" value="{{ item.name }}">
+				<input type="hidden" name="fName" value="add">
+			</form>
+		{% endif %}
+	</div>
+	<br>
+	{% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+	<form method="POST" action="/home/catalog/">
+		{% csrf_token %}
+		<h5>Update eBay Search String</h5>
+		<label>Current Query: {{ query }}</label>
+		<input type="text" name="newQuery">
+		<input type="submit" value="Update">
+		<input type="hidden" name="fName" value="query">
+	</form>
+	<br>
+	<h5>Checkout for a Driver</h5>
+	{% for d in drivList %}
+		<form method="POST" action="/home/catalog/">
+			{% csrf_token %}
+			<div>
+				{{ d.last }}, {{ d.first }}: {{ d.pointTotal }} points
+				<input type="submit" value="Apply">
+				<input type="hidden" name="dUser" value="{{ d.user }}">
+				<input type="hidden" name="fName" value="{{ d.user }}">
+			</div>
+		</form>
+		<br>
+	{% endfor %}
+{% endblock sidebar %}
+
+{% block extraButtons %}
+	<a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+	<a class="nav-item nav-link" href="/home/point_value/">My Company</a>
+	<a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
+{% endblock extraButtons %}

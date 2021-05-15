@@ -1,0 +1,20 @@
+{% extends "driverRewards/basic.html"%}
+{% block content %}
+	<h1>My Profile</h1>
+	<p>First Name: {{infoList.0.fname2}}</p>
+	<p>Last Name: {{infoList.0.lname2}}</p>
+	<p>Preferred Name: {{infoList.0.pname2}}</p>
+	<p>Email Address: {{infoList.0.email2}}</p>
+	<p>Phone Number: {{infoList.0.phone2}}</p>
+	<p>Address: {{infoList.0.address2}}</p>
+	<a href="http://54.88.218.67/home/profile/update/">Click Here to Edit Personal Info</a> <br>
+	<a href="http://54.88.218.67/home/profile/update/pass/">Click Here to Change Password</a>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+        <a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+	<a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+	<a class="nav-item nav-link" href="/home/admin_catalogs/">Catalogs</a>
+	<a class="nav-item nav-link" href="/home/reports/">Reports</a>
+{% endblock extraButtons %}

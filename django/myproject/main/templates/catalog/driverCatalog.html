@@ -1,0 +1,36 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	<h1>{{ compProf.name }} Catalog</h1>
+	<div>Powered by eBay</div>
+	<br>
+	{% for item in itemList %}
+	<div>
+		<a href="{{ item.itemURL }}" target="_blank" style="color: black;"><strong>{{ item.name }}</strong></a>
+		<br>
+		{{ item.points }} points
+		<form method="POST" action="/home/catalogs/view/">
+			{% csrf_token %}
+			<input type="submit" value="Add to Cart">
+			<input type="hidden" name="company" value="{{ compProf.cid }}">
+			<input type="hidden" name="pointCost" value="{{ item.points }}">
+			<input type="hidden" name="itemID" value="{{ item.itemID }}">
+			<input type="hidden" name="itemName" value="{{ item.name }}">
+		</form>
+	</div>
+	<br>
+	{% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+	<p>My Points: <strong>{{ drivPoints }}</strong></p>
+{% endblock sidebar %}
+
+{% block extraButtons %}
+	<a class="nav-item nav-link" href="/home/companies/">Companies</a>
+	<a class="nav-item nav-link" href="/home/catalogs/">Catalogs</a>
+{% endblock extraButtons %}
+
+{% block rightButtons %}
+	<a class="nav-item nav-link" href="/home/purchases/">My Purchases</a>
+        <a class="nav-item nav-link" href="/home/cart_list/">My Carts</a>
+{% endblock rightButtons %}

@@ -1,0 +1,35 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	<h1>Confirm Purchase in {{ comp.name }}</h1>
+	<br>
+	{% for item in itemList %}
+	<div>
+		<strong>{{ item.name }}</strong>
+		<br>
+		{{ item.pointCost }} points
+	</div>
+	<br>
+	{% endfor %}
+{% endblock content %}
+
+{% block sidebar %}
+	<p>{{ dProf.first }} {{ dProf.last }}'s Points: {{ drivPoints }}</p>
+	<p>Total Point Cost: {{ totalPoints }}</p>
+	<p>Net Points Remaining: <strong>{{ diff }}</strong></p>
+	{% if totalPoints <= drivPoints %}
+                <form method="POST" action="/home/drivers/viewCart/confirm/">
+			{% csrf_token %}
+			<input type="submit" value="Confirm Purchase">
+			<input type="hidden" value="{{ comp.cid }}" name="compID">
+			<input type="hidden" name="dUser" value="{{ dUser }}">
+		</form>
+        {% else %}
+                <p>Sorry, you do not currently have enough points to checkout with this cart</p>
+        {% endif %}
+{% endblock sidebar %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+        <a class="nav-item nav-link" href="/home/point_value/">My Company</a>
+        <a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
+{% endblock extraButtons %}

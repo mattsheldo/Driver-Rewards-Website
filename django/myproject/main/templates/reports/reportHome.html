@@ -1,0 +1,16 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+	<h1>Reports</h1>
+	<br>
+	<div><a href="//54.88.218.67/home/reports/salesOverTime/" style="color: black;">Sales Over Time</a></div>
+	<div><a href="//54.88.218.67/home/reports/sponsorSales/" style="color: black;">Sales by Sponsor</a></div>
+	<div><a href="//54.88.218.67/home/reports/driverPurchases/" style="color: black;">Purchases by Driver</a></div>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+	<a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+	<a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+	<a class="nav-item nav-link" href="/home/admin_catalogs/">Catalogs</a>
+	<a class="nav-item nav-link" href="/home/reports/">Reports</a>
+{% endblock extraButtons %}

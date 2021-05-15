@@ -1,0 +1,36 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  {% load static %}
+  <h1>Driver List</h1>
+  <p>List of all drivers</p>
+  <div id="dList">
+  {% for driver in driverList %}
+  	<strong><a href="//54.88.218.67/home/all_drivers/viewProfile/?uname={{ driver.user }}" style="color: black;">{{ driver.last }}, {{ driver.first }}</a></strong>
+	{% for obj in driver.pointsObj %}
+		<form method="POST", action="/home/all_drivers/">
+                	{% csrf_token %}
+			<div>{{ obj.employerName }}: {{ obj.pointTotal }} points</div>
+                	<input type="number" name="pointInput" id="pointInputID">
+                	<input type="submit" value="Add" id="addButID" name="addBut">
+                	<input type="submit" value="Remove" id="removeButID" name="removeBut">
+                	<input type="hidden" id="userid" name="username" value="{{ driver.user }}">
+                	<input type="hidden" id="pointid" name="point" value="{{ obj.pointTotal }}">
+			<input type="hidden" id="empID" name="emp" value="{{ obj.employer }}">
+			<input type="button" onclick="location.href='//54.88.218.67/home/all_drivers/viewCart/?dUser={{ driver.user }}&comp={{ obj.employer }}';" value="View Cart" />
+			<input type="button" onclick="location.href='//54.88.218.67/home/all_drivers/purchases/?dUser={{ driver.user }}';" value="View Purchases" />
+        	</form>
+	{% endfor %}
+	<br>
+  {% endfor %}
+  </div>
+  
+  <script type="text/javascript" src="{% static "main/driverList.js" %}"></script>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/all_drivers/">All Drivers</a>
+	<a class="nav-item nav-link" href="/home/all_sponsors/">All Sponsors</a>
+	<a class="nav-item nav-link" href="/home/all_admins/">All Admins</a>
+	<a class="nav-item nav-link" href="/home/admin_catalogs/">Catalogs</a>
+	<a class="nav-item nav-link" href="/home/reports/">Reports</a>
+{% endblock extraButtons %}

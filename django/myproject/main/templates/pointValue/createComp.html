@@ -1,0 +1,25 @@
+{% extends "driverRewards/basic.html" %}
+{% block content %}
+  <form method="POST" action"home/point_value/">
+  	{% csrf_token %}
+	<div>
+		<h2>Join a Company</h2>
+		<label>Join Code: &nbsp;</label>
+		<input type="number" name="compCode">
+		<input type="submit" value="Join" name="join">
+	</div>
+	<br>
+	<div>
+		<h2>Create a Company</h2>
+		<label>Company Name: &nbsp;</label>
+		<input type="text" name="compName">
+		<input type="submit" value="Create" name="create">
+	</div>
+  </form>
+{% endblock content %}
+
+{% block extraButtons %}
+        <a class="nav-item nav-link" href="/home/drivers/">My Drivers</a>
+        <a class="nav-item nav-link" href="/home/point_value/">My Company</a>
+	<a class="nav-item nav-link" href="/home/catalog/">Catalog</a>
+{% endblock extraButtons %}
